@@ -1,4 +1,6 @@
 package com.example.TPI.PROG4.models;
 
-public class Partido {
+public enum Rol {
+    USER,
+    ADMIN
 }

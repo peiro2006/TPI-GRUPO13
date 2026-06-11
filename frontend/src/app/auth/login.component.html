@@ -1,0 +1,57 @@
+<div class="auth-page">
+  <div class="auth-card">
+    <div class="auth-header">
+      <div class="ball-icon">⚽</div>
+      <h1>Iniciar Sesión</h1>
+      <p class="subtitle">Ingresá a tu cuenta para pronosticar</p>
+    </div>
+
+    <form (ngSubmit)="login()" #loginForm="ngForm" class="auth-form">
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input
+          id="email"
+          type="email"
+          name="email"
+          [(ngModel)]="data.email"
+          required
+          email
+          #email="ngModel"
+          placeholder="tu@email.com"
+        />
+        @if (email.invalid && (email.dirty || email.touched)) {
+          <small class="error-text">Ingresá un email válido</small>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="password">Contraseña</label>
+        <input
+          id="password"
+          type="password"
+          name="password"
+          [(ngModel)]="data.password"
+          required
+          #password="ngModel"
+          placeholder="••••••••"
+        />
+        @if (password.invalid && (password.dirty || password.touched)) {
+          <small class="error-text">La contraseña es obligatoria</small>
+        }
+      </div>
+
+      @if (error) {
+        <p class="error-msg">{{ error }}</p>
+      }
+
+      <button type="submit" class="btn-submit" [disabled]="loginForm.invalid || loading">
+        {{ loading ? 'Ingresando...' : 'Ingresar' }}
+      </button>
+    </form>
+
+    <p class="auth-footer">
+      ¿No tenés cuenta?
+      <a routerLink="/register">Registrate</a>
+    </p>
+  </div>
+</div>
