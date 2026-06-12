@@ -16,12 +16,24 @@ export interface LoginRequest {
 }
 
 export interface AuthResponse {
+  id: number;
   token: string;
   nombre: string;
   apellido: string;
   email: string;
   rol: string;
   clan: string | null;
+}
+
+export interface RankingUsuario {
+  id: number;
+  nombre: string;
+  apellido: string;
+  email: string;
+  clan: string | null;
+  puntos: number;
+  pronosticos: number;
+  posicion?: number;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -55,9 +67,26 @@ export class AuthService {
     return localStorage.getItem('token');
   }
 
+  private readonly RANKING_URL = 'http://localhost:8080/api/ranking';
+
+  getRanking(orden: string = 'desc', clan?: string): Observable<RankingUsuario[]> {
+    let params = `?orden=${orden}`;
+    if (clan) params += `&clan=${encodeURIComponent(clan)}`;
+    return this.http.get<RankingUsuario[]>(`${this.RANKING_URL}${params}`);
+  }
+
+  getClanes(): Observable<string[]> {
+    return this.http.get<string[]>(`${this.RANKING_URL}/clanes`);
+  }
+
+  getPerfil(id: number): Observable<RankingUsuario> {
+    return this.http.get<RankingUsuario>(`${this.RANKING_URL}/usuario/${id}`);
+  }
+
   private saveSession(res: AuthResponse): void {
     localStorage.setItem('token', res.token);
     localStorage.setItem('usuario', JSON.stringify({
+      id: res.id,
       nombre: res.nombre,
       apellido: res.apellido,
       email: res.email,

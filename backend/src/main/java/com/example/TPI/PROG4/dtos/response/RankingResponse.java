@@ -7,12 +7,13 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AuthResponse {
+public class RankingResponse {
     private Long id;
-    private String token;
     private String nombre;
     private String apellido;
     private String email;
-    private String rol;
     private String clan;
+    private Integer puntos;
+    private Integer pronosticos;
+    private Integer posicion;
 }

@@ -41,6 +41,14 @@ public class Usuario implements UserDetails {
     @Builder.Default
     private Rol rol = Rol.USER;
 
+    @Column(nullable = false)
+    @Builder.Default
+    private Integer puntos = 0;
+
+    @Column(nullable = false)
+    @Builder.Default
+    private Integer pronosticos = 0;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("ROLE_" + rol.name()));

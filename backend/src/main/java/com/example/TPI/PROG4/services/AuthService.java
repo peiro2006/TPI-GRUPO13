@@ -59,6 +59,7 @@ public class AuthService {
         var jwt = jwtService.generateToken(usuario);
 
         return AuthResponse.builder()
+                .id(usuario.getId())
                 .token(jwt)
                 .nombre(usuario.getNombre())
                 .apellido(usuario.getApellido())
