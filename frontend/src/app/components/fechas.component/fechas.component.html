@@ -1,0 +1,55 @@
+<h2>Gestión de Fechas</h2>
+
+@if (mensajeError) {
+<div style="color: red; margin-bottom: 1rem">{{ mensajeError }}</div>
+}
+
+<div style="margin-bottom: 16px;">
+  <button (click)="mostrarAgregar()">+ Agregar Fecha</button>
+</div>
+
+@if (mostrarFormulario) {
+<div style="margin-bottom: 16px; padding: 12px; background: #fff; border-radius: 6px; box-shadow: 0 1px 4px rgba(0,0,0,0.1);">
+  <input #nuevaFechaInput [(ngModel)]="nuevaFechaNombre" placeholder="Nombre de la fecha" style="margin-right: 8px;" />
+  <button (click)="agregarFecha()">Guardar</button>
+  <button (click)="cancelarAgregar()">Cancelar</button>
+</div>
+}
+
+<table border="1" cellpadding="8" cellspacing="0">
+  <thead>
+  <tr>
+    <th>ID</th>
+    <th>Nombre</th>
+    <th>Estado</th>
+    <th>Inicio</th>
+    <th>Fin</th>
+    <th>Acciones</th>
+  </tr>
+  </thead>
+  <tbody>
+  @for (fecha of fechas; track fecha.idFecha) {
+  <tr (click)="verPartidos(fecha)" style="cursor: pointer;">
+    <td>{{ fecha.idFecha }}</td>
+    <td>
+      @if (editandoId === fecha.idFecha) {
+      <input #editInput [(ngModel)]="nombreEditando" (keyup.enter)="guardarEdicion(fecha.idFecha)" />
+      <button (click)="guardarEdicion(fecha.idFecha)">Guardar</button>
+      <button (click)="cancelarEdicion()">Cancelar</button>
+      } @else {
+      {{ fecha.nombreFecha }}
+      }
+    </td>
+    <td>{{ fecha.estadoFecha }}</td>
+    <td>{{ fecha.inicioFecha | date:'short' }}</td>
+    <td>{{ fecha.finFecha | date:'short' }}</td>
+    <td>
+      @if (editandoId !== fecha.idFecha) {
+      <button (click)="empezarEditar(fecha)">Editar</button>
+      <button (click)="eliminar(fecha.idFecha)">Eliminar</button>
+      }
+    </td>
+  </tr>
+  }
+  </tbody>
+</table>
