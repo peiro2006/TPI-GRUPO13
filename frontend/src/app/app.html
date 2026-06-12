@@ -1,1 +1,21 @@
-<router-outlet />
+<header class="navbar">
+  <div class="nav-container">
+    <a routerLink="/" class="nav-brand">
+      <span class="brand-icon">⚽</span>
+      <span class="brand-text">ProdeGol</span>
+    </a>
+    <nav class="nav-links">
+      @if (auth.isLoggedIn()) {
+        <span class="usuario-greeting">Hola, {{ userName() }}</span>
+        <button class="btn-logout" (click)="logout()">Salir</button>
+      } @else {
+        <a routerLink="/login" class="nav-link">Iniciar Sesión</a>
+        <a routerLink="/register" class="nav-link nav-register">Registrarse</a>
+      }
+    </nav>
+  </div>
+</header>
+
+<main>
+  <router-outlet />
+</main>
