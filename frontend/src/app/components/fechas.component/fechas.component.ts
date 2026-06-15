@@ -20,7 +20,12 @@ export class FechasComponent implements OnInit {
   nombreEditando = '';
   mensajeError = '';
   mostrarFormulario = false;
+  guardando = false;
   nuevaFechaNombre = '';
+  nuevaFechaInicio = '';
+  nuevaFechaFin = '';
+  inicioEditando = '';
+  finEditando = '';
 
   ngOnInit() {
     this.cargarFechas();
@@ -32,22 +37,32 @@ export class FechasComponent implements OnInit {
         this.fechas = data;
         this.cdr.detectChanges();
       },
-      error: () => this.mensajeError = 'Error al cargar fechas'
+      error: () => {
+        this.mensajeError = 'Error al cargar fechas';
+        this.cdr.detectChanges();
+      }
     });
   }
 
   mostrarAgregar() {
     this.mostrarFormulario = true;
     this.nuevaFechaNombre = '';
+    this.nuevaFechaInicio = '';
+    this.nuevaFechaFin = '';
     this.mensajeError = '';
   }
 
   agregarFecha() {
     if (!this.nuevaFechaNombre.trim()) return;
-    this.fechaService.crear(this.nuevaFechaNombre.trim()).subscribe({
+    this.fechaService.crear(
+      this.nuevaFechaNombre.trim(),
+      this.nuevaFechaInicio || null,
+      this.nuevaFechaFin || null).subscribe({
       next: () => {
         this.mostrarFormulario = false;
         this.nuevaFechaNombre = '';
+        this.nuevaFechaInicio = '';
+        this.nuevaFechaFin = '';
         this.cargarFechas();
       },
       error: err => {
@@ -67,24 +82,35 @@ export class FechasComponent implements OnInit {
     this.mostrarFormulario = false;
     this.nuevaFechaNombre = '';
     this.mensajeError = '';
+    this.nuevaFechaInicio = '';
+    this.nuevaFechaFin = '';
   }
 
   empezarEditar(fecha: FechaResponse) {
     this.editandoId = fecha.idFecha;
     this.nombreEditando = fecha.nombreFecha;
+    this.inicioEditando = fecha.inicioFecha ? fecha.inicioFecha.substring(0, 10) : '';
+    this.finEditando = fecha.finFecha ? fecha.finFecha.substring(0, 10) : '';
     this.mensajeError = '';
     this.cdr.detectChanges();
   }
 
   guardarEdicion(id: number) {
-    if (!this.nombreEditando.trim()) return;
-    this.fechaService.actualizar(id, this.nombreEditando.trim()).subscribe({
+    if (this.guardando || !this.nombreEditando.trim()) return;
+    this.guardando = true;
+    this.mensajeError = '';
+    this.cdr.detectChanges();
+    this.fechaService.actualizar(id, this.nombreEditando.trim(), this.inicioEditando || null, this.finEditando || null).subscribe({
       next: () => {
         this.editandoId = null;
         this.nombreEditando = '';
+        this.inicioEditando = '';
+        this.finEditando = '';
+        this.guardando = false;
         this.cargarFechas();
       },
       error: err => {
+        this.guardando = false;
         this.mensajeError = typeof err.error === 'string' ? err.error : 'Error al actualizar';
         this.cdr.detectChanges();
       }
@@ -94,6 +120,8 @@ export class FechasComponent implements OnInit {
   cancelarEdicion() {
     this.editandoId = null;
     this.nombreEditando = '';
+    this.inicioEditando = '';
+    this.finEditando = '';
     this.mensajeError = '';
   }
 

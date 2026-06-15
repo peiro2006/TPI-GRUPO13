@@ -3,7 +3,7 @@ package com.example.TPI.PROG4.models;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,10 +29,10 @@ public class Fecha {
     private String estadoFecha = "Programada";
 
     @Column(name = "inicio_fecha")
-    private LocalDateTime inicioFecha;
+    private LocalDate inicioFecha;
 
     @Column(name = "fin_fecha")
-    private LocalDateTime finFecha;
+    private LocalDate finFecha;
 
     @OneToMany(mappedBy = "fecha")
     private List<Partido> partidos = new ArrayList<>();

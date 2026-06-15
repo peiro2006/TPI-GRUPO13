@@ -22,7 +22,11 @@ public class UpdateFechaController {
     public ResponseEntity<FechaResponse> actualizarFecha(
             @PathVariable Long id,
             @Valid @RequestBody UpdateFechaRequest request) {
-        Fecha fechaActualizada = fechaService.actualizarFecha(id, request.getNombreFecha());
+        Fecha fechaActualizada = fechaService.actualizarFecha(
+                id,
+                request.getNombreFecha(),
+                request.getInicioFecha(),
+                request.getFinFecha());
         return ResponseEntity.ok(fechaMapper.toResponse(fechaActualizada));
     }
 }

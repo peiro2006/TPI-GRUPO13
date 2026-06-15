@@ -1,6 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { AuthService, RankingUsuario } from '../auth.service';
+import { AuthService, RankingUsuario } from '../../auth.service';
 
 @Component({
   selector: 'app-perfil',

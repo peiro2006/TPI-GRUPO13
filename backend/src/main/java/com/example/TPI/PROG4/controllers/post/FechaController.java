@@ -22,7 +22,10 @@ public class FechaController {
 
     @PostMapping
     public ResponseEntity<FechaResponse> crearFecha(@Valid @RequestBody CreateFechaRequest request) {
-        Fecha fechaCreada = fechaService.crearFecha(request.getNombreFecha());
+        Fecha fechaCreada = fechaService.crearFecha(
+                request.getNombreFecha(),
+                request.getInicioFecha(),
+                request.getFinFecha());
         FechaResponse response = fechaMapper.toResponse(fechaCreada);
 
         return ResponseEntity

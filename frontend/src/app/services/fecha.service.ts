@@ -15,18 +15,19 @@ export class FechaService {
   private readonly http = inject(HttpClient);
   private readonly apiUrl = 'http://localhost:8080/api/fechas';
 
-  listar(): Observable<FechaResponse[]> {
-    return this.http.get<FechaResponse[]>(this.apiUrl);
+
+  listar(orden: string = 'asc'): Observable<FechaResponse[]> {
+      return this.http.get<FechaResponse[]>(`${this.apiUrl}?orden=${orden}`);
   }
 
-  actualizar(id: number, nombreFecha: string): Observable<FechaResponse> {
-    return this.http.put<FechaResponse>(`${this.apiUrl}/${id}`, { nombreFecha });
+  actualizar(id: number, nombreFecha: string, inicioFecha: string | null, finFecha: string | null): Observable<FechaResponse> {
+    return this.http.put<FechaResponse>(`${this.apiUrl}/${id}`, { nombreFecha, inicioFecha, finFecha });
   }
 
   eliminar(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
-  crear(nombreFecha: string): Observable<FechaResponse> {
-  return this.http.post<FechaResponse>(this.apiUrl, { nombreFecha });
-}
+  crear(nombreFecha: string, inicioFecha: string | null, finFecha: string | null): Observable<FechaResponse> {
+    return this.http.post<FechaResponse>(this.apiUrl, { nombreFecha, inicioFecha, finFecha });
+  }
 }

@@ -1,12 +1,14 @@
-import { Component, computed, inject, OnInit } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { ChangeDetectorRef, Component, computed, inject, OnInit } from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
+import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { AuthService, RankingUsuario } from '../auth.service';
+import { AuthService, RankingUsuario } from '../../auth.service';
+import { FechaService, FechaResponse } from '../../services/fecha.service';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [RouterLink, FormsModule],
+  imports: [RouterLink, FormsModule, DatePipe],
   template: `
     <div class="home-page">
 
@@ -33,6 +35,12 @@ import { AuthService, RankingUsuario } from '../auth.service';
           <span class="panel-icon">👤</span>
           <span class="panel-titulo">Mi Perfil</span>
           <span class="panel-desc">Tus datos y estadísticas</span>
+        </button>
+
+        <button class="panel" [class.activo]="seccion === 'fechas'" (click)="seccion = 'fechas'">
+                  <span class="panel-icon">📅</span>
+                  <span class="panel-titulo">Fixture</span>
+                  <span class="panel-desc">Calendario de partidos</span>
         </button>
       </div>
 
@@ -122,6 +130,41 @@ import { AuthService, RankingUsuario } from '../auth.service';
         </div>
       }
 
+      @if (seccion === 'fechas') {
+          <div style="display: flex; justify-content: flex-end; margin-bottom: 8px;">
+            <button (click)="toggleOrdenFechas()" style="background: linear-gradient(135deg, #1a472a, #2d7a3a); color: #fff; border: none; border-radius: 8px; padding: 8px 16px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; letter-spacing: 0.3px;">
+              {{ ordenFechas === 'asc' ? '↑ Más antiguas' : '↓ Más recientes' }}
+            </button>
+          </div>
+        <div class="tabla-wrapper">
+
+          <table class="tabla-ranking">
+            <thead>
+              <tr>
+
+                <th>Nombre</th>
+                <th>Inicio</th>
+                <th>Fin</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+            <tbody  style="cursor: pointer;" >
+              @for (f of fechas; track f.idFecha) {
+                <tr (click)="verPartidos(f)">
+                  <td>{{ f.nombreFecha }}</td>
+                  <td>{{ f.inicioFecha | date:'dd/MM/yyyy' }}</td>
+                  <td>{{ f.finFecha | date:'dd/MM/yyyy' }}</td>
+                  <td>{{ f.estadoFecha }}</td>
+                </tr>
+              }
+              @if (fechas.length === 0) {
+                <tr><td colspan="5" class="vacio">No hay fechas cargadas</td></tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+
       @if (seccion === 'pronosticos') {
         <div class="seccion-vacia">
           <span class="seccion-icon">📋</span>
@@ -177,6 +220,7 @@ import { AuthService, RankingUsuario } from '../auth.service';
           </div>
         </div>
       }
+
     </div>
   `,
   styles: [`
@@ -318,10 +362,15 @@ import { AuthService, RankingUsuario } from '../auth.service';
 })
 export class HomeComponent implements OnInit {
   private auth = inject(AuthService);
+  private fechaService = inject(FechaService);
+  private router = inject(Router);
+  private cdr = inject(ChangeDetectorRef);
 
-  seccion: 'ranking' | 'pronosticos' | 'perfil' = 'ranking';
+  fechas: FechaResponse[] = [];
+  seccion: 'ranking' | 'pronosticos' | 'perfil' | 'fechas' = 'ranking';
   ranking: RankingUsuario[] = [];
   clanes: string[] = [];
+  ordenFechas: string = 'asc';
   orden = 'desc';
   clanSeleccionado = '';
 
@@ -378,6 +427,7 @@ export class HomeComponent implements OnInit {
   ngOnInit(): void {
     this.cargarClanes();
     this.cargarRanking();
+    this.cargarFechas();
   }
 
   cargarRanking(): void {
@@ -398,4 +448,21 @@ export class HomeComponent implements OnInit {
     this.seccion = 'ranking';
     this.cargarRanking();
   }
+  cargarFechas(): void {
+    this.fechaService.listar(this.ordenFechas).subscribe({
+      next: (data) => {
+        this.fechas = data;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+  toggleOrdenFechas(): void {
+    this.ordenFechas = this.ordenFechas === 'asc' ? 'desc' : 'asc';
+    this.cargarFechas();
+  }
+  verPartidos(fecha: FechaResponse) {
+      this.router.navigate(['/fechas', fecha.idFecha, 'partidos'], {
+        state: { nombreFecha: fecha.nombreFecha }
+      });
+    }
 }
