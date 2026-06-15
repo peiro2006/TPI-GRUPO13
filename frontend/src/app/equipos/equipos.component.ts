@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Equipo, EquipoCreateRequest, EquiposService } from './equipos.service';
 
@@ -11,6 +11,7 @@ import { Equipo, EquipoCreateRequest, EquiposService } from './equipos.service';
 })
 export class EquiposComponent implements OnInit {
   private readonly equiposService = inject(EquiposService);
+  private readonly cdr = inject(ChangeDetectorRef);
   private readonly limiteEquipos = 32;
 
   equipos: Equipo[] = [];
@@ -71,10 +72,13 @@ export class EquiposComponent implements OnInit {
             equipo => equipo.id_equipo === this.equipoSeleccionado?.id_equipo
           ) ?? null;
         }
+
+        this.cdr.detectChanges();
       },
       error: err => {
         this.loading = false;
         this.error = this.obtenerError(err, 'No se pudieron cargar los equipos.');
+        this.cdr.detectChanges();
       }
     });
   }
@@ -93,8 +97,14 @@ export class EquiposComponent implements OnInit {
     this.error = '';
     this.mensaje = '';
     this.equiposService.obtener(equipo.id_equipo).subscribe({
-      next: detalle => this.equipoSeleccionado = detalle,
-      error: err => this.error = this.obtenerError(err, 'No se pudo obtener el equipo.')
+      next: detalle => {
+        this.equipoSeleccionado = detalle;
+        this.cdr.detectChanges();
+      },
+      error: err => {
+        this.error = this.obtenerError(err, 'No se pudo obtener el equipo.');
+        this.cdr.detectChanges();
+      }
     });
   }
 
@@ -118,10 +128,12 @@ export class EquiposComponent implements OnInit {
         this.nuevoEquipo = this.formularioVacio();
         this.cargarEquipos();
         this.equipoSeleccionado = equipo;
+        this.cdr.detectChanges();
       },
       error: err => {
         this.guardando = false;
         this.error = this.obtenerError(err, 'No se pudo crear el equipo.');
+        this.cdr.detectChanges();
       }
     });
   }
@@ -141,10 +153,12 @@ export class EquiposComponent implements OnInit {
         this.eliminandoId = null;
         this.mensaje = 'Equipo marcado como inactivo.';
         this.cargarEquipos();
+        this.cdr.detectChanges();
       },
       error: err => {
         this.eliminandoId = null;
         this.error = this.obtenerError(err, 'No se pudo eliminar el equipo.');
+        this.cdr.detectChanges();
       }
     });
   }

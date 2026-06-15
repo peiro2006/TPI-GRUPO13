@@ -48,6 +48,7 @@ export class EquiposService {
 
     return this.http
       .get<BaseResponse<Equipo[]>>(this.API_URL, { params })
+
       .pipe(map(response => response.data ?? []));
   }
 
