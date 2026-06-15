@@ -1,0 +1,212 @@
+<div class="equipos-page">
+  <section class="equipos-hero">
+    <div>
+      <p class="eyebrow">Administracion</p>
+      <h1>Equipos</h1>
+      <p class="subtitle">Lista actualizada del torneo principal</p>
+    </div>
+
+    <div class="contador">
+      <span class="contador-numero">{{ equipos.length }}</span>
+      <span class="contador-label">de 32</span>
+    </div>
+  </section>
+
+  @if (error) {
+    <p class="alerta error">{{ error }}</p>
+  }
+
+  @if (mensaje) {
+    <p class="alerta ok">{{ mensaje }}</p>
+  }
+
+  <section class="layout">
+    <div class="zona-listas">
+      <div class="toolbar">
+        <div class="search-box">
+          <label for="buscarEquipo">Buscar equipo</label>
+          <div class="search-row">
+            <input
+              id="buscarEquipo"
+              type="search"
+              name="buscarEquipo"
+              [(ngModel)]="busqueda"
+              (keyup.enter)="buscar()"
+              placeholder="Nombre, corto o descripcion"
+            />
+            <button type="button" class="btn-icon" title="Buscar" (click)="buscar()">⌕</button>
+            @if (busqueda) {
+              <button type="button" class="btn-icon secundario" title="Limpiar" (click)="limpiarBusqueda()">×</button>
+            }
+          </div>
+        </div>
+      </div>
+
+      <div class="tabla-wrapper">
+        <div class="tabla-header">
+          <h2>Activos</h2>
+          <span>{{ equiposActivos.length }}</span>
+        </div>
+
+        @if (loading) {
+          <div class="estado-vacio">Cargando equipos...</div>
+        } @else if (equiposActivos.length === 0) {
+          <div class="estado-vacio">No hay equipos activos.</div>
+        } @else {
+          <table class="tabla-equipos">
+            <thead>
+              <tr>
+                <th>Equipo</th>
+                <th>Corto</th>
+                <th>Estado</th>
+                <th class="acciones-col">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (equipo of equiposActivos; track equipo.id_equipo) {
+                <tr [class.seleccionado]="equipoSeleccionado?.id_equipo === equipo.id_equipo">
+                  <td>
+                    <button type="button" class="equipo-link" (click)="seleccionarEquipo(equipo)">
+                      <span class="escudo">{{ iniciales(equipo) }}</span>
+                      <span>{{ equipo.nombre_equipo }}</span>
+                    </button>
+                  </td>
+                  <td class="codigo">{{ equipo.nombre_corto }}</td>
+                  <td><span class="pill activo">Activo</span></td>
+                  <td class="acciones">
+                    <button
+                      type="button"
+                      class="btn-danger"
+                      [disabled]="eliminandoId === equipo.id_equipo"
+                      (click)="eliminarEquipo(equipo)"
+                    >
+                      {{ eliminandoId === equipo.id_equipo ? '...' : 'Eliminar' }}
+                    </button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        }
+      </div>
+
+      <div class="tabla-wrapper inactivos">
+        <div class="tabla-header">
+          <h2>Eliminados</h2>
+          <span>{{ equiposInactivos.length }}</span>
+        </div>
+
+        @if (equiposInactivos.length === 0) {
+          <div class="estado-vacio">No hay equipos eliminados.</div>
+        } @else {
+          <table class="tabla-equipos">
+            <thead>
+              <tr>
+                <th>Equipo</th>
+                <th>Corto</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (equipo of equiposInactivos; track equipo.id_equipo) {
+                <tr [class.seleccionado]="equipoSeleccionado?.id_equipo === equipo.id_equipo">
+                  <td>
+                    <button type="button" class="equipo-link inactivo" (click)="seleccionarEquipo(equipo)">
+                      <span class="escudo">{{ iniciales(equipo) }}</span>
+                      <span>{{ equipo.nombre_equipo }}</span>
+                    </button>
+                  </td>
+                  <td class="codigo">{{ equipo.nombre_corto }}</td>
+                  <td><span class="pill inactivo">Inactivo</span></td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        }
+      </div>
+    </div>
+
+    <aside class="panel-lateral">
+      <section class="form-card">
+        <div class="form-header">
+          <h2>Registrar equipo</h2>
+          <span>{{ cuposDisponibles }} cupos</span>
+        </div>
+
+        @if (limiteAlcanzado) {
+          <p class="limite-msg">Limite de equipos alcanzado.</p>
+        }
+
+        <form (ngSubmit)="crearEquipo()" #equipoForm="ngForm" class="equipo-form">
+          <div class="form-group">
+            <label for="nombreEquipo">Nombre entero</label>
+            <input
+              id="nombreEquipo"
+              type="text"
+              name="nombreEquipo"
+              [(ngModel)]="nuevoEquipo.nombre_equipo"
+              minlength="4"
+              maxlength="20"
+              required
+              [disabled]="limiteAlcanzado || guardando"
+              placeholder="Boca Juniors"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="nombreCorto">Nombre corto</label>
+            <input
+              id="nombreCorto"
+              type="text"
+              name="nombreCorto"
+              [(ngModel)]="nuevoEquipo.nombre_corto"
+              minlength="3"
+              maxlength="3"
+              required
+              [disabled]="limiteAlcanzado || guardando"
+              placeholder="BOC"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="descripcionEquipo">Descripcion</label>
+            <textarea
+              id="descripcionEquipo"
+              name="descripcionEquipo"
+              [(ngModel)]="nuevoEquipo.descripcion"
+              maxlength="200"
+              [disabled]="limiteAlcanzado || guardando"
+              placeholder="Fundacion, titulos o historia breve"
+            ></textarea>
+          </div>
+
+          <button
+            type="submit"
+            class="btn-submit"
+            [disabled]="equipoForm.invalid || limiteAlcanzado || guardando"
+          >
+            {{ guardando ? 'Guardando...' : 'Crear equipo' }}
+          </button>
+        </form>
+      </section>
+
+      <section class="detalle-card">
+        <h2>Detalle</h2>
+
+        @if (equipoSeleccionado) {
+          <div class="detalle-escudo">{{ iniciales(equipoSeleccionado) }}</div>
+          <h3>{{ equipoSeleccionado.nombre_equipo }}</h3>
+          <p class="codigo-grande">{{ equipoSeleccionado.nombre_corto }}</p>
+          <span class="pill" [class.activo]="equipoSeleccionado.estado_equipo" [class.inactivo]="!equipoSeleccionado.estado_equipo">
+            {{ equipoSeleccionado.estado_equipo ? 'Activo' : 'Inactivo' }}
+          </span>
+          <p class="detalle-texto">
+            {{ equipoSeleccionado.descripcion || 'Sin descripcion cargada.' }}
+          </p>
+        } @else {
+          <p class="detalle-vacio">Selecciona un equipo.</p>
+        }
+      </section>
+    </aside>
+  </section>
+</div>
