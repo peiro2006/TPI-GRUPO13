@@ -1,0 +1,143 @@
+.page-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 32px 20px;
+}
+
+.header {
+  margin-bottom: 24px;
+}
+
+.header h2 {
+  color: #1a472a;
+  font-size: 24px;
+  font-weight: 700;
+  margin: 8px 0 0 0;
+  border-bottom: 3px solid #2e7d32;
+  padding-bottom: 8px;
+}
+
+.back-link {
+  color: #2e7d32;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.back-link:hover {
+  text-decoration: underline;
+}
+
+.error {
+  background: #fef2f2;
+  color: #dc2626;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+
+.vacio {
+  text-align: center;
+  padding: 60px 20px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+}
+
+.vacio-icon {
+  font-size: 48px;
+  display: block;
+  margin-bottom: 12px;
+}
+
+.vacio p {
+  color: #888;
+  font-size: 15px;
+}
+
+.partidos-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.partido-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.partido-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background: #f8faf8;
+  border-bottom: 1px solid #e8f0e8;
+}
+
+.fecha {
+  font-size: 13px;
+  font-weight: 600;
+  color: #555;
+}
+
+.estado {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 12px;
+  border-radius: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.estado.programado {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.estado.jugado {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.card-body {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+}
+
+.equipo {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1a472a;
+  flex: 1;
+}
+
+.equipo.local {
+  text-align: right;
+  padding-right: 16px;
+}
+
+.equipo.visitante {
+  text-align: left;
+  padding-left: 16px;
+}
+
+.vs {
+  font-size: 14px;
+  font-weight: 800;
+  color: #2e7d32;
+  padding: 4px 12px;
+  background: #f0faf0;
+  border-radius: 8px;
+}

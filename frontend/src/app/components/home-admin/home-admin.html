@@ -1,7 +1,21 @@
-<h1>Panel de Administración</h1>
-<nav>
-  <ul>
-    <li><a routerLink="/fechas">Gestionar Fechas</a></li>
-  </ul>
-</nav>
-<router-outlet />
+<div class="admin-page">
+  <div class="hero">
+    <div class="hero-icon">⚙️</div>
+    <h1>Panel de Administración</h1>
+    <p class="subtitle">Gestioná los recursos del sistema</p>
+  </div>
+
+  <div class="cards">
+    <a routerLink="/fechas" class="card">
+      <span class="card-icon">📅</span>
+      <span class="card-title">Gestionar Fechas</span>
+      <span class="card-desc">Crear, editar y eliminar fechas del torneo</span>
+    </a>
+
+    <a routerLink="/equipos" class="card">
+      <span class="card-icon">⚽</span>
+      <span class="card-title">Gestionar Equipos</span>
+      <span class="card-desc">Administrar equipos participantes</span>
+    </a>
+  </div>
+</div>

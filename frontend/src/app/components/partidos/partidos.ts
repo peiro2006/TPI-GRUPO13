@@ -1,12 +1,13 @@
 import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterModule } from '@angular/router';
+import { DatePipe } from '@angular/common';
 import { Equipo, EquiposService } from '../../equipos/equipos.service';
 import { PartidoResponse, PartidoService } from '../../services/partido.service';
 
 @Component({
   selector: 'app-partidos',
-  imports: [RouterModule, FormsModule],
+  imports: [RouterModule, FormsModule, DatePipe],
   templateUrl: './partidos.html',
   styleUrl: './partidos.css',
 })
@@ -27,6 +28,9 @@ export class PartidosComponent implements OnInit {
   nuevaFechaPartido = '';
   nuevoLocal: number | null = null;
   nuevoVisitante: number | null = null;
+
+  editandoId: number | null = null;
+  fechaEditando = '';
 
   ngOnInit() {
     this.cargarPartidos();
@@ -85,6 +89,44 @@ export class PartidosComponent implements OnInit {
       error: err => {
         this.guardando = false;
         this.error = err.error?.message || 'Error al crear partido';
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  empezarEditar(p: PartidoResponse) {
+    this.editandoId = p.idPartido;
+    this.fechaEditando = p.fechaPartido.substring(0, 10);
+    this.error = '';
+  }
+
+  guardarEdicion(id: number) {
+    if (!this.fechaEditando) return;
+    this.partidoService.actualizar(id, { fechaPartido: this.fechaEditando }).subscribe({
+      next: () => {
+        this.editandoId = null;
+        this.fechaEditando = '';
+        this.cargarPartidos();
+      },
+      error: err => {
+        this.error = err.error?.error || 'Error al actualizar partido';
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  cancelarEdicion() {
+    this.editandoId = null;
+    this.fechaEditando = '';
+    this.error = '';
+  }
+
+  eliminar(id: number) {
+    if (!confirm('¿Eliminar este partido?')) return;
+    this.partidoService.eliminar(id).subscribe({
+      next: () => this.cargarPartidos(),
+      error: err => {
+        this.error = err.error?.error || 'Error al eliminar partido';
         this.cdr.detectChanges();
       }
     });

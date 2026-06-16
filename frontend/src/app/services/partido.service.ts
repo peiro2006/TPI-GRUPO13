@@ -18,6 +18,10 @@ export interface PartidoRequest {
   local: string;
 }
 
+export interface PartidoUpdateRequest {
+  fechaPartido: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class PartidoService {
   private readonly http = inject(HttpClient);
@@ -28,10 +32,18 @@ export class PartidoService {
   }
 
   listarPorFecha(fechaId: number): Observable<PartidoResponse[]> {
-  return this.http.get<PartidoResponse[]>(`${this.apiUrl}/fecha/${fechaId}`);
+    return this.http.get<PartidoResponse[]>(`${this.apiUrl}/fecha/${fechaId}`);
   }
 
   crear(datos: PartidoRequest): Observable<PartidoResponse> {
     return this.http.post<PartidoResponse>(this.apiUrl, datos);
+  }
+
+  actualizar(id: number, datos: PartidoUpdateRequest): Observable<PartidoResponse> {
+    return this.http.patch<PartidoResponse>(`${this.apiUrl}/${id}`, datos);
+  }
+
+  eliminar(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 }

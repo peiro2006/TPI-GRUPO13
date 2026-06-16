@@ -1,7 +1,7 @@
 <h2>Partidos - {{ nombreFecha }}</h2>
 
 @if (error) {
-<div style="color: red; margin-bottom: 1rem">{{ error }}</div>
+<div class="error">{{ error }}</div>
 }
 
 <div class="form-card">
@@ -29,15 +29,33 @@
       <th>Local</th>
       <th>Visitante</th>
       <th>Estado</th>
+      <th>Acciones</th>
     </tr>
   </thead>
   <tbody>
     @for (p of partidos; track p.idPartido) {
     <tr>
-      <td>{{ p.fechaPartido }}</td>
+      <td>
+        @if (editandoId === p.idPartido) {
+          <input type="date" [(ngModel)]="fechaEditando" (keyup.enter)="guardarEdicion(p.idPartido)" />
+        } @else {
+          {{ p.fechaPartido | date:'dd/MM/yyyy' }}
+        }
+      </td>
       <td>{{ p.local }}</td>
       <td>{{ p.visitante }}</td>
       <td>{{ p.estadoPartido }}</td>
+      <td class="acciones">
+        @if (editandoId !== p.idPartido) {
+          @if (p.estadoPartido === 'Por jugarse') {
+            <button class="btn-edit" (click)="empezarEditar(p)">Editar</button>
+            <button class="btn-delete" (click)="eliminar(p.idPartido)">Eliminar</button>
+          }
+        } @else {
+          <button class="btn-save" (click)="guardarEdicion(p.idPartido)">Guardar</button>
+          <button class="btn-cancel" (click)="cancelarEdicion()">Cancelar</button>
+        }
+      </td>
     </tr>
     }
   </tbody>

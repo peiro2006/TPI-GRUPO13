@@ -1,3 +1,36 @@
-<h2>Partidos de #{{ nombreFecha }}</h2>
-<p>Acá se mostrarán los partidos cuando estén implementados.</p>
-<a routerLink="/home-cliente">Volver a inicio</a>
+<div class="page-container">
+  <div class="header">
+    <a routerLink="/" class="back-link">← Volver al inicio</a>
+    <h2>Partidos - {{ nombreFecha }}</h2>
+  </div>
+
+  @if (error) {
+    <div class="error">{{ error }}</div>
+  }
+
+  @if (partidos.length === 0) {
+    <div class="vacio">
+      <span class="vacio-icon">📅</span>
+      <p>No hay partidos cargados para esta fecha.</p>
+    </div>
+  }
+
+  <div class="partidos-grid">
+    @for (p of partidos; track p.idPartido) {
+      <div class="partido-card">
+        <div class="card-header">
+          <span class="fecha">{{ p.fechaPartido | date:'dd/MM/yyyy' }}</span>
+          <span class="estado" [class.programado]="p.estadoPartido === 'Por jugarse'"
+                              [class.jugado]="p.estadoPartido !== 'Por jugarse'">
+            {{ p.estadoPartido }}
+          </span>
+        </div>
+        <div class="card-body">
+          <div class="equipo local">{{ p.local }}</div>
+          <div class="vs">VS</div>
+          <div class="equipo visitante">{{ p.visitante }}</div>
+        </div>
+      </div>
+    }
+  </div>
+</div>

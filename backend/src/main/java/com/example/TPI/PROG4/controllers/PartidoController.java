@@ -3,6 +3,7 @@ package com.example.TPI.PROG4.controllers;
 import com.example.TPI.PROG4.Interfaces.*;
 import com.example.TPI.PROG4.dtos.request.EquipoCreateReqDto;
 import com.example.TPI.PROG4.dtos.request.PartidoCreateReqDto;
+import com.example.TPI.PROG4.dtos.request.PartidoUpdateReqDto;
 import com.example.TPI.PROG4.dtos.response.EquipoCreateResDto;
 import com.example.TPI.PROG4.dtos.response.PartidoCreateResDto;
 import jakarta.validation.Valid;
@@ -22,6 +23,8 @@ public class PartidoController {
 
     private final IPartidoCreateService partidoCreateService;
     private final IPartidoListService partidoList;
+    private final IPartidoUpdateService partidoUpdateService;
+    private final IPartidoDeleteService partidoDeleteService;
 
     @PostMapping
     public ResponseEntity<PartidoCreateResDto> createPartido(
@@ -51,6 +54,19 @@ public class PartidoController {
         return ResponseEntity.ok(
                 partidoList.executePorFecha(fechaId)
         );
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<PartidoCreateResDto> updatePartido(
+            @PathVariable Long id,
+            @Valid @RequestBody PartidoUpdateReqDto request) {
+        return ResponseEntity.ok(partidoUpdateService.execute(id, request));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletePartido(@PathVariable Long id) {
+        partidoDeleteService.execute(id);
+        return ResponseEntity.noContent().build();
     }
 
 }

@@ -1,10 +1,11 @@
 package com.example.TPI.PROG4.repositories.specs;
 
-import com.example.TPI.PROG4.models.Equipo;
 import com.example.TPI.PROG4.models.Partido;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +22,11 @@ public class PartidoSpecs {
                 predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("local")), "%" + local.toLowerCase() + "%"));
             }
             if (fechaPartido != null && !fechaPartido.isEmpty()) {
-                predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("fechaPartido")), "%" + fechaPartido.toLowerCase() + "%"));
+                try {
+                    LocalDate date = LocalDate.parse(fechaPartido);
+                    predicates.add(criteriaBuilder.equal(root.get("fechaPartido"), date));
+                } catch (DateTimeParseException ignored) {
+                }
             }
 
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));

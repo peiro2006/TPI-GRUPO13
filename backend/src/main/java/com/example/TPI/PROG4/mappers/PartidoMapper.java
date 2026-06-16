@@ -1,6 +1,7 @@
 package com.example.TPI.PROG4.mappers;
 
 import com.example.TPI.PROG4.dtos.request.PartidoCreateReqDto;
+import com.example.TPI.PROG4.dtos.request.PartidoUpdateReqDto;
 import com.example.TPI.PROG4.dtos.response.PartidoCreateResDto;
 import com.example.TPI.PROG4.models.Fecha;
 import com.example.TPI.PROG4.models.Partido;
@@ -31,6 +32,12 @@ public class PartidoMapper {
         );
 
     }
+    public static Partido updateFechaPartido(Partido partido, java.time.LocalDate fechaPartido) {
+        return partido.toBuilder()
+                .fechaPartido(fechaPartido)
+                .build();
+    }
+
     public static List<PartidoCreateResDto> toResponseDtoList (List<Partido> models) {
         return models.stream()
                 .map(PartidoMapper::toResponseDto)
