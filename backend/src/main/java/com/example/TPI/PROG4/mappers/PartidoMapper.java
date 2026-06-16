@@ -2,23 +2,28 @@ package com.example.TPI.PROG4.mappers;
 
 import com.example.TPI.PROG4.dtos.request.PartidoCreateReqDto;
 import com.example.TPI.PROG4.dtos.response.PartidoCreateResDto;
+import com.example.TPI.PROG4.models.Fecha;
 import com.example.TPI.PROG4.models.Partido;
 
 import java.util.List;
 
 public class PartidoMapper {
 
-    public static Partido toModel (PartidoCreateReqDto request) {
+    public static Partido toModel (PartidoCreateReqDto request, Fecha fecha) {
         return Partido.builder()
+                .fecha(fecha)
                 .fechaPartido(request.fechaPartido())
                 .local(request.local())
                 .visitante(request.visitante())
+                .resultadoPartido("")
+                .estadoPartido("Por jugarse")
                 .build();
     }
 
     public static PartidoCreateResDto toResponseDto (Partido partido) {
         return new PartidoCreateResDto(
                 partido.getIdPartido(),
+                partido.getFecha().getIdFecha(),
                 partido.getFechaPartido(),
                 partido.getVisitante(),
                 partido.getLocal(),

@@ -5,11 +5,13 @@ import jakarta.persistence.Column;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
 
 public record PartidoCreateReqDto (
-
+         @NotNull
+         Long idFecha,
          LocalDate fechaPartido,
          @NotBlank
          String visitante,

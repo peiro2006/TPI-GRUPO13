@@ -1,0 +1,37 @@
+import { inject, Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+
+export interface PartidoResponse {
+  idPartido: number;
+  idFecha: number;
+  fechaPartido: string;
+  visitante: string;
+  local: string;
+  estadoPartido: string;
+}
+
+export interface PartidoRequest {
+  idFecha: number;
+  fechaPartido: string;
+  visitante: string;
+  local: string;
+}
+
+@Injectable({ providedIn: 'root' })
+export class PartidoService {
+  private readonly http = inject(HttpClient);
+  private readonly apiUrl = 'http://localhost:8080/partidos';
+
+  listar(): Observable<PartidoResponse[]> {
+    return this.http.get<PartidoResponse[]>(this.apiUrl);
+  }
+
+  listarPorFecha(fechaId: number): Observable<PartidoResponse[]> {
+  return this.http.get<PartidoResponse[]>(`${this.apiUrl}/fecha/${fechaId}`);
+  }
+
+  crear(datos: PartidoRequest): Observable<PartidoResponse> {
+    return this.http.post<PartidoResponse>(this.apiUrl, datos);
+  }
+}

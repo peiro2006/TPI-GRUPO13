@@ -6,4 +6,6 @@ import com.example.TPI.PROG4.dtos.response.PartidoCreateResDto;
 public interface IPartidoCreateService {
 
     PartidoCreateResDto execute(PartidoCreateReqDto request);
+
+
 }

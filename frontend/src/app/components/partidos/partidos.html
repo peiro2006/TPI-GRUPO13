@@ -1,3 +1,46 @@
-<h2>Partidos de #{{ nombreFecha }}</h2>
-<p>Acá se mostrarán los partidos cuando estén implementados.</p>
+<h2>Partidos - {{ nombreFecha }}</h2>
+
+@if (error) {
+<div style="color: red; margin-bottom: 1rem">{{ error }}</div>
+}
+
+<div class="form-card">
+  <h3>Nuevo Partido</h3>
+  <input type="date" [(ngModel)]="nuevaFechaPartido" />
+  <select [(ngModel)]="nuevoLocal">
+    <option [ngValue]="null">Seleccionar local</option>
+    @for (e of equipos; track e.id_equipo) {
+    <option [ngValue]="e.id_equipo">{{ e.nombre_equipo }}</option>
+    }
+  </select>
+  <select [(ngModel)]="nuevoVisitante">
+    <option [ngValue]="null">Seleccionar visitante</option>
+    @for (e of equipos; track e.id_equipo) {
+    <option [ngValue]="e.id_equipo">{{ e.nombre_equipo }}</option>
+    }
+  </select>
+  <button (click)="crearPartido()" [disabled]="guardando">Guardar</button>
+</div>
+
+<table>
+  <thead>
+    <tr>
+      <th>Fecha</th>
+      <th>Local</th>
+      <th>Visitante</th>
+      <th>Estado</th>
+    </tr>
+  </thead>
+  <tbody>
+    @for (p of partidos; track p.idPartido) {
+    <tr>
+      <td>{{ p.fechaPartido }}</td>
+      <td>{{ p.local }}</td>
+      <td>{{ p.visitante }}</td>
+      <td>{{ p.estadoPartido }}</td>
+    </tr>
+    }
+  </tbody>
+</table>
+
 <a routerLink="/fechas">Volver a fechas</a>

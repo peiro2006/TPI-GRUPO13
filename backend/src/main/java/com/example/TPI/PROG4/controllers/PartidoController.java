@@ -1,7 +1,6 @@
 package com.example.TPI.PROG4.controllers;
 
 import com.example.TPI.PROG4.Interfaces.*;
-import com.example.TPI.PROG4.configs.BaseResponse;
 import com.example.TPI.PROG4.dtos.request.EquipoCreateReqDto;
 import com.example.TPI.PROG4.dtos.request.PartidoCreateReqDto;
 import com.example.TPI.PROG4.dtos.response.EquipoCreateResDto;
@@ -25,29 +24,33 @@ public class PartidoController {
     private final IPartidoListService partidoList;
 
     @PostMapping
-    public ResponseEntity<BaseResponse<PartidoCreateResDto>> createPartido(
+    public ResponseEntity<PartidoCreateResDto> createPartido(
             @Valid @RequestBody PartidoCreateReqDto request
     ) {
         return ResponseEntity.ok(
-                BaseResponse.ok(
-                        partidoCreateService.execute(request),
-                        "Partido creado correctamente"
-                )
+
+                        partidoCreateService.execute(request)
         );
 
     }
 
     @GetMapping
-    public ResponseEntity<BaseResponse<List<PartidoCreateResDto>>> listPartido(
+    public ResponseEntity<List<PartidoCreateResDto>> listPartido(
             @RequestParam(required = false) String fechaPartido,
             @RequestParam(required = false) String visitante,
             @RequestParam(required = false) String local) {
 
         return ResponseEntity.ok(
-                BaseResponse.ok(
-                        partidoList.execute(fechaPartido, visitante, local), "Partidos listados correctamente")
+                partidoList.execute(fechaPartido, visitante, local)
         );
+    }
 
+    @GetMapping("/fecha/{fechaId}")
+    public ResponseEntity<List<PartidoCreateResDto>> listarPorFecha(
+            @PathVariable Long fechaId) {
+        return ResponseEntity.ok(
+                partidoList.executePorFecha(fechaId)
+        );
     }
 
 }

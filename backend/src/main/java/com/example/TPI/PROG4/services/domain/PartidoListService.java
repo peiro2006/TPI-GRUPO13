@@ -26,4 +26,9 @@ public class PartidoListService implements IPartidoListService {
 
         return PartidoMapper.toResponseDtoList(partidos);
     }
+    @Override
+    public List<PartidoCreateResDto> executePorFecha(Long fechaId) {
+        List<Partido> partidos = partidosRepo.findByFecha_IdFecha(fechaId);
+        return PartidoMapper.toResponseDtoList(partidos);
+    }
 }

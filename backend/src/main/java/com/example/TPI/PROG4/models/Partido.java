@@ -28,7 +28,7 @@ public class Partido {
     @Column(name="fecha_partido")
     private LocalDate fechaPartido;
 
-    @NotBlank
+
     @Column(name="resultado_partido")
     private String resultadoPartido;
 
@@ -40,8 +40,7 @@ public class Partido {
     @Column(name="equipo_local")
     private String local;
 
-    @NotBlank
     @Column(name = "estado_partido")
-    private String estadoPartido = "Programado";
+    private String estadoPartido = "Por jugarse";
 
 }

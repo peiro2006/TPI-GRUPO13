@@ -8,4 +8,5 @@ public interface IPartidoListService {
 
     List<PartidoCreateResDto> execute(String fechaPartido, String visitante, String local);
 
+    List<PartidoCreateResDto> executePorFecha(Long fechaId);
 }
