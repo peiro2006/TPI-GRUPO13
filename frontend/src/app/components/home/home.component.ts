@@ -1,8 +1,9 @@
+import { HttpClient } from '@angular/common/http';
 import { ChangeDetectorRef, Component, computed, inject, OnInit } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { AuthService, RankingUsuario } from '../../auth.service';
+import { AuthService, PronosticoPartido, PronosticoRequest, RankingUsuario } from '../../auth.service';
 import { FechaService, FechaResponse } from '../../services/fecha.service';
 
 @Component({
@@ -25,7 +26,7 @@ import { FechaService, FechaResponse } from '../../services/fecha.service';
           <span class="panel-desc">Tabla de posiciones general</span>
         </button>
 
-        <button class="panel" [class.activo]="seccion === 'pronosticos'" (click)="seccion = 'pronosticos'">
+        <button class="panel" [class.activo]="seccion === 'pronosticos'" (click)="seccion = 'pronosticos'; cargarPronosticos()">
           <span class="panel-icon">📋</span>
           <span class="panel-titulo">Pronósticos</span>
           <span class="panel-desc">Registrá tus pronósticos</span>
@@ -166,28 +167,70 @@ import { FechaService, FechaResponse } from '../../services/fecha.service';
       }
 
       @if (seccion === 'pronosticos') {
-        <div class="seccion-vacia">
-          <span class="seccion-icon">📋</span>
-          <h2>Pronósticos</h2>
-          <p>Acá vas a poder registrar tus pronósticos para los próximos partidos. ¡Próximamente!</p>
-          <div class="partidos-placeholder">
-            <div class="partido-placeholder">
-              <span>Equipo Local</span>
-              <span class="vs">VS</span>
-              <span>Equipo Visitante</span>
-            </div>
-            <div class="partido-placeholder">
-              <span>Equipo Local</span>
-              <span class="vs">VS</span>
-              <span>Equipo Visitante</span>
-            </div>
-            <div class="partido-placeholder">
-              <span>Equipo Local</span>
-              <span class="vs">VS</span>
-              <span>Equipo Visitante</span>
-            </div>
+        @if (pronosticosError) {
+          <div class="error-msg">{{ pronosticosError }}</div>
+        }
+        @if (pronosticosExito) {
+          <div class="exito-msg">{{ pronosticosExito }}</div>
+        }
+
+        @if (pronosticosCargando) {
+          <div class="cargando">Cargando partidos...</div>
+        } @else if (pronosticos.length === 0) {
+          <div class="seccion-vacia">
+            <span class="seccion-icon">⚽</span>
+            <h2>Pronósticos</h2>
+            <p>No hay partidos próximos para pronosticar.</p>
           </div>
-        </div>
+        } @else {
+          <div class="pronosticos-lista">
+            @for (p of pronosticos; track p.partidoId) {
+              <div class="pronostico-card" [class.no-editable]="!p.editable" [class.tiene-pronostico]="p.id != null">
+                <div class="pronostico-card-header">
+                  <span class="pronostico-fecha">{{ p.fechaPartido | date:'dd/MM/yyyy' }} - {{ p.horaPartido }}hs</span>
+                  @if (!p.editable) {
+                    <span class="badge-cerrado">Cerrado</span>
+                  } @else if (p.id) {
+                    <span class="badge-guardado">Guardado</span>
+                  }
+                </div>
+                <div class="pronostico-card-body">
+                  <div class="equipo-box local-box">
+                    <span class="equipo-nombre">{{ p.local }}</span>
+                  </div>
+                  <div class="marcador-inputs">
+                    <input type="number" min="0"
+                      [disabled]="!p.editable"
+                      [(ngModel)]="p.golesLocal"
+                      placeholder="?"
+                      class="goles-input">
+                    <span class="vs-label">VS</span>
+                    <input type="number" min="0"
+                      [disabled]="!p.editable"
+                      [(ngModel)]="p.golesVisitante"
+                      placeholder="?"
+                      class="goles-input">
+                  </div>
+                  <div class="equipo-box visitante-box">
+                    <span class="equipo-nombre">{{ p.visitante }}</span>
+                  </div>
+                </div>
+                @if (p.editable) {
+                  <div class="pronostico-card-footer">
+                    <button class="btn-guardar" (click)="guardarPronostico(p)"
+                      [disabled]="p.golesLocal == null || p.golesVisitante == null || p.golesLocal < 0 || p.golesVisitante < 0">
+                      @if (p.id) {
+                        Actualizar Pronóstico
+                      } @else {
+                        Guardar Pronóstico
+                      }
+                    </button>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        }
       }
 
       @if (seccion === 'perfil') {
@@ -232,7 +275,7 @@ import { FechaService, FechaResponse } from '../../services/fecha.service';
     .subtitle { font-size: 16px; color: #666; margin: 0; }
 
     .paneles {
-      display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
       margin-bottom: 32px;
     }
     .panel {
@@ -322,6 +365,16 @@ import { FechaService, FechaResponse } from '../../services/fecha.service';
     .sin-clan { color: #ccc; }
     .vacio { text-align: center; color: #999; padding: 40px !important; }
 
+    .error-msg {
+      background: #fdecea; color: #c62828; padding: 12px 20px; border-radius: 10px;
+      margin-bottom: 16px; font-size: 14px; font-weight: 500; text-align: center;
+    }
+    .exito-msg {
+      background: #e8f5e9; color: #2e7d32; padding: 12px 20px; border-radius: 10px;
+      margin-bottom: 16px; font-size: 14px; font-weight: 500; text-align: center;
+    }
+    .cargando { text-align: center; color: #888; padding: 60px 20px; font-size: 16px; }
+
     .seccion-vacia {
       text-align: center; padding: 60px 20px; background: #fff;
       border-radius: 16px; box-shadow: 0 2px 16px rgba(0,0,0,0.08);
@@ -329,17 +382,58 @@ import { FechaService, FechaResponse } from '../../services/fecha.service';
     }
     .seccion-icon { font-size: 56px; display: block; margin-bottom: 12px; }
     .seccion-vacia h2 { font-size: 24px; font-weight: 700; color: #1a472a; margin: 0 0 8px 0; }
-    .seccion-vacia p { color: #888; font-size: 15px; margin: 0 0 32px 0; }
+    .seccion-vacia p { color: #888; font-size: 15px; margin: 0; }
 
-    .partidos-placeholder {
-      display: flex; flex-direction: column; gap: 12px; max-width: 500px; margin: 0 auto;
+    .pronosticos-lista { display: flex; flex-direction: column; gap: 16px; }
+    .pronostico-card {
+      background: #fff; border-radius: 16px; overflow: hidden;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
     }
-    .partido-placeholder {
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 16px 24px; background: #f5faf5; border-radius: 12px;
-      border: 1px dashed #2d7a3a; font-size: 14px; font-weight: 600; color: #444;
+    .pronostico-card.no-editable { opacity: 0.7; }
+    .pronostico-card.tiene-pronostico { border-left: 4px solid #2d7a3a; }
+    .pronostico-card-header {
+      background: #f5faf5; padding: 12px 20px; display: flex;
+      justify-content: space-between; align-items: center;
     }
-    .vs { color: #2d7a3a; font-weight: 800; font-size: 16px; }
+    .pronostico-fecha { font-size: 13px; color: #555; font-weight: 600; }
+    .badge-cerrado {
+      background: #e0e0e0; color: #666; font-size: 11px; font-weight: 700;
+      padding: 3px 10px; border-radius: 12px; text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .badge-guardado {
+      background: #2d7a3a; color: #fff; font-size: 11px; font-weight: 700;
+      padding: 3px 10px; border-radius: 12px; text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .pronostico-card-body {
+      display: flex; align-items: center; justify-content: center;
+      gap: 20px; padding: 24px 20px;
+    }
+    .equipo-box {
+      flex: 1; text-align: center;
+    }
+    .equipo-nombre { font-size: 16px; font-weight: 700; color: #1a472a; }
+    .marcador-inputs {
+      display: flex; align-items: center; gap: 12px;
+    }
+    .goles-input {
+      width: 64px; height: 64px; text-align: center; font-size: 24px;
+      font-weight: 800; border: 2px solid #e0e0e0; border-radius: 12px;
+      font-family: inherit;
+    }
+    .goles-input:focus { outline: none; border-color: #2d7a3a; }
+    .goles-input:disabled { background: #f5f5f5; color: #999; }
+    .vs-label { font-size: 16px; font-weight: 800; color: #888; }
+    .pronostico-card-footer {
+      padding: 12px 20px; background: #fafafa; text-align: center;
+    }
+    .btn-guardar {
+      background: linear-gradient(135deg, #1a472a, #2d7a3a); color: #fff;
+      border: none; border-radius: 10px; padding: 10px 32px;
+      font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit;
+      letter-spacing: 0.3px; transition: all 0.2s;
+    }
+    .btn-guardar:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(45,122,58,0.3); }
+    .btn-guardar:disabled { background: #ccc; cursor: not-allowed; transform: none; box-shadow: none; }
 
     .perfil-card {
       background: #fff; border-radius: 16px; padding: 40px;
@@ -357,7 +451,11 @@ import { FechaService, FechaResponse } from '../../services/fecha.service';
     .perfil-info p { font-size: 14px; color: #444; margin: 4px 0; }
     .perfil-info strong { color: #1a472a; }
 
-    @media (max-width: 640px) { .paneles { grid-template-columns: 1fr; } }
+    @media (max-width: 700px) { .paneles { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 480px) {
+      .paneles { grid-template-columns: 1fr; }
+      .pronostico-card-body { flex-direction: column; gap: 12px; }
+    }
   `]
 })
 export class HomeComponent implements OnInit {
@@ -365,6 +463,7 @@ export class HomeComponent implements OnInit {
   private fechaService = inject(FechaService);
   private router = inject(Router);
   private cdr = inject(ChangeDetectorRef);
+  private http = inject(HttpClient);
 
   fechas: FechaResponse[] = [];
   seccion: 'ranking' | 'pronosticos' | 'perfil' | 'fechas' = 'ranking';
@@ -373,6 +472,11 @@ export class HomeComponent implements OnInit {
   ordenFechas: string = 'asc';
   orden = 'desc';
   clanSeleccionado = '';
+
+  pronosticos: PronosticoPartido[] = [];
+  pronosticosCargando = false;
+  pronosticosError = '';
+  pronosticosExito = '';
 
   get puntero(): RankingUsuario | undefined {
     return this.ranking.length > 0 ? this.ranking[0] : undefined;
@@ -448,6 +552,7 @@ export class HomeComponent implements OnInit {
     this.seccion = 'ranking';
     this.cargarRanking();
   }
+
   cargarFechas(): void {
     this.fechaService.listar(this.ordenFechas).subscribe({
       next: (data) => {
@@ -456,13 +561,76 @@ export class HomeComponent implements OnInit {
       }
     });
   }
+
   toggleOrdenFechas(): void {
     this.ordenFechas = this.ordenFechas === 'asc' ? 'desc' : 'asc';
     this.cargarFechas();
   }
+
   verPartidos(fecha: FechaResponse) {
-      this.router.navigate(['/fechas', fecha.idFecha, 'partidos'], {
-        state: { nombreFecha: fecha.nombreFecha }
-      });
+    this.router.navigate(['/fechas', fecha.idFecha, 'partidos'], {
+      state: { nombreFecha: fecha.nombreFecha }
+    });
+  }
+
+  cargarPronosticos(): void {
+    this.pronosticosCargando = true;
+    this.pronosticosError = '';
+    this.pronosticosExito = '';
+
+    this.http.get<PronosticoPartido[]>('http://localhost:8080/api/pronosticos/proximos', {
+      headers: { Authorization: 'Bearer ' + localStorage.getItem('token') }
+    }).subscribe({
+      next: (data) => {
+        console.log('PRONOSTICOS RESPONSE:', data);
+        this.pronosticos = data || [];
+        this.pronosticosCargando = false;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('PRONOSTICOS ERROR:', err);
+        this.pronosticosCargando = false;
+        const msg = err.error?.error || err.message || 'Error al cargar los partidos';
+        this.pronosticosError = msg;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  guardarPronostico(p: PronosticoPartido): void {
+    if (p.golesLocal == null || p.golesVisitante == null) return;
+    if (p.golesLocal < 0 || p.golesVisitante < 0) {
+      this.pronosticosError = 'Los goles deben ser 0 o mayores.';
+      return;
     }
+
+    this.pronosticosError = '';
+    this.pronosticosExito = '';
+
+    const data: PronosticoRequest = {
+      golesLocal: p.golesLocal,
+      golesVisitante: p.golesVisitante
+    };
+
+    this.http.put<PronosticoPartido>(
+      'http://localhost:8080/api/pronosticos/partido/' + p.partidoId,
+      data,
+      { headers: { Authorization: 'Bearer ' + localStorage.getItem('token') } }
+    ).subscribe({
+      next: (res) => {
+        p.id = res.id;
+        p.golesLocal = res.golesLocal;
+        p.golesVisitante = res.golesVisitante;
+        this.pronosticosExito = 'Pronóstico guardado correctamente.';
+        this.pronosticosError = '';
+        this.cdr.detectChanges();
+        this.cargarRanking();
+      },
+      error: (err) => {
+        this.pronosticosError = err.error?.error || err.error || err.message || 'Error al guardar el pronóstico.';
+        this.pronosticosExito = '';
+        this.cdr.detectChanges();
+      }
+    });
+  }
 }

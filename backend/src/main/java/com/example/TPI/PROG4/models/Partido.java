@@ -5,7 +5,6 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 @Entity
 @Table(name = "partidos")
@@ -28,7 +27,6 @@ public class Partido {
     @Column(name="fecha_partido")
     private LocalDate fechaPartido;
 
-
     @Column(name="resultado_partido")
     private String resultadoPartido;
 
@@ -42,5 +40,4 @@ public class Partido {
 
     @Column(name = "estado_partido")
     private String estadoPartido = "Por jugarse";
-
 }

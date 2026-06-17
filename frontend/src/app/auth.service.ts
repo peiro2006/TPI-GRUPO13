@@ -36,9 +36,29 @@ export interface RankingUsuario {
   posicion?: number;
 }
 
+export interface PronosticoPartido {
+  id: number | null;
+  partidoId: number;
+  local: string;
+  visitante: string;
+  fechaPartido: string;
+  horaPartido: string;
+  estadoPartido: string;
+  golesLocal: number | null;
+  golesVisitante: number | null;
+  editable: boolean;
+}
+
+export interface PronosticoRequest {
+  golesLocal: number;
+  golesVisitante: number;
+}
+
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly API_URL = 'http://localhost:8080/api/auth';
+  private readonly RANKING_URL = 'http://localhost:8080/api/ranking';
+  private readonly PRONOSTICO_URL = 'http://localhost:8080/api/pronosticos';
 
   constructor(private http: HttpClient) {}
 
@@ -67,8 +87,6 @@ export class AuthService {
     return localStorage.getItem('token');
   }
 
-  private readonly RANKING_URL = 'http://localhost:8080/api/ranking';
-
   getRanking(orden: string = 'desc', clan?: string): Observable<RankingUsuario[]> {
     let params = `?orden=${orden}`;
     if (clan) params += `&clan=${encodeURIComponent(clan)}`;
@@ -81,6 +99,14 @@ export class AuthService {
 
   getPerfil(id: number): Observable<RankingUsuario> {
     return this.http.get<RankingUsuario>(`${this.RANKING_URL}/usuario/${id}`);
+  }
+
+  getPronosticosProximos(): Observable<PronosticoPartido[]> {
+    return this.http.get<PronosticoPartido[]>(`${this.PRONOSTICO_URL}/proximos`);
+  }
+
+  guardarPronostico(partidoId: number, data: PronosticoRequest): Observable<PronosticoPartido> {
+    return this.http.put<PronosticoPartido>(`${this.PRONOSTICO_URL}/partido/${partidoId}`, data);
   }
 
   private saveSession(res: AuthResponse): void {

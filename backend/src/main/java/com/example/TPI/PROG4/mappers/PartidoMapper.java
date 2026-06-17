@@ -30,8 +30,8 @@ public class PartidoMapper {
                 partido.getLocal(),
                 partido.getEstadoPartido()
         );
-
     }
+
     public static Partido updateFechaPartido(Partido partido, java.time.LocalDate fechaPartido) {
         return partido.toBuilder()
                 .fechaPartido(fechaPartido)
@@ -43,5 +43,4 @@ public class PartidoMapper {
                 .map(PartidoMapper::toResponseDto)
                 .toList();
     }
-
 }
