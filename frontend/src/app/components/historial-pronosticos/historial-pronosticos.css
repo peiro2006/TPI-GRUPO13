@@ -1,0 +1,255 @@
+.page-container {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 32px 20px;
+}
+
+.header {
+  margin-bottom: 24px;
+}
+
+.header h2 {
+  color: #1a472a;
+  font-size: 24px;
+  font-weight: 700;
+  margin: 8px 0 0 0;
+  border-bottom: 3px solid #2e7d32;
+  padding-bottom: 8px;
+}
+
+.back-link {
+  color: #2e7d32;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.back-link:hover {
+  text-decoration: underline;
+}
+
+.error {
+  background: #fef2f2;
+  color: #dc2626;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+
+.cargando {
+  text-align: center;
+  padding: 60px 20px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+}
+
+.cargando-icon {
+  font-size: 48px;
+  display: block;
+  margin-bottom: 12px;
+}
+
+.cargando p {
+  color: #888;
+  font-size: 15px;
+}
+
+.filtros {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.filtro-btn {
+  font-family: 'Inter', sans-serif;
+  padding: 8px 20px;
+  border-radius: 20px;
+  border: 2px solid #e0e0e0;
+  background: #fff;
+  color: #555;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.filtro-btn:hover {
+  border-color: #2e7d32;
+  color: #2e7d32;
+}
+
+.filtro-btn.activo {
+  background: #2e7d32;
+  color: #fff;
+  border-color: #2e7d32;
+}
+
+.grupos {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.grupo-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  overflow: hidden;
+}
+
+.grupo-header {
+  padding: 14px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.grupo-pendiente {
+  background: #e8f5e9;
+  border-bottom: 3px solid #4caf50;
+}
+
+.grupo-enjuego {
+  background: #fff3e0;
+  border-bottom: 3px solid #ff9800;
+}
+
+.grupo-finalizado {
+  background: #f3e5f5;
+  border-bottom: 3px solid #9c27b0;
+}
+
+.grupo-titulo {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.grupo-pendiente .grupo-titulo { color: #2e7d32; }
+.grupo-enjuego .grupo-titulo { color: #e65100; }
+.grupo-finalizado .grupo-titulo { color: #7b1fa2; }
+
+.grupo-count {
+  font-size: 12px;
+  font-weight: 600;
+  color: #888;
+}
+
+.grupo-body {
+  padding: 0;
+}
+
+.pronostico-item {
+  padding: 16px 20px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.pronostico-item:last-child {
+  border-bottom: none;
+}
+
+.pronostico-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.fecha {
+  font-size: 12px;
+  font-weight: 600;
+  color: #888;
+}
+
+.pronostico-estado {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 10px;
+  border-radius: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.estado-pendiente {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.estado-enjuego {
+  background: #fff3e0;
+  color: #e65100;
+}
+
+.estado-finalizado {
+  background: #f3e5f5;
+  color: #7b1fa2;
+}
+
+.pronostico-body {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.equipo-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.equipo-nombre {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1a472a;
+}
+
+.vs {
+  font-size: 11px;
+  font-weight: 800;
+  color: #2e7d32;
+  padding: 2px 8px;
+  background: #f0faf0;
+  border-radius: 6px;
+}
+
+.resultado-info {
+  text-align: right;
+}
+
+.tu-pronostico {
+  font-size: 13px;
+  font-weight: 600;
+  color: #2e7d32;
+  background: #f0faf0;
+  padding: 4px 12px;
+  border-radius: 8px;
+  white-space: nowrap;
+}
+
+.sin-pronostico {
+  font-size: 12px;
+  color: #aaa;
+  font-style: italic;
+}
+
+.vacio {
+  text-align: center;
+  padding: 60px 20px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+}
+
+.vacio-icon {
+  font-size: 48px;
+  display: block;
+  margin-bottom: 12px;
+}
+
+.vacio p {
+  color: #888;
+  font-size: 15px;
+}

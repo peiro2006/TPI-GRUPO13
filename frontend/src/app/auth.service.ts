@@ -49,6 +49,13 @@ export interface PronosticoPartido {
   editable: boolean;
 }
 
+export interface PronosticoComunidad {
+  nombreUsuario: string;
+  apellidoUsuario: string;
+  golesLocal: number;
+  golesVisitante: number;
+}
+
 export interface PronosticoRequest {
   golesLocal: number;
   golesVisitante: number;
@@ -99,6 +106,14 @@ export class AuthService {
 
   getPerfil(id: number): Observable<RankingUsuario> {
     return this.http.get<RankingUsuario>(`${this.RANKING_URL}/usuario/${id}`);
+  }
+
+  getPronosticosComunidad(partidoId: number): Observable<PronosticoComunidad[]> {
+    return this.http.get<PronosticoComunidad[]>(`${this.PRONOSTICO_URL}/partido/${partidoId}/comunidad`);
+  }
+
+  getMisPronosticos(): Observable<PronosticoPartido[]> {
+    return this.http.get<PronosticoPartido[]>(`${this.PRONOSTICO_URL}/mispronosticos`);
   }
 
   getPronosticosProximos(): Observable<PronosticoPartido[]> {

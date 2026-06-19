@@ -1,6 +1,7 @@
 package com.example.TPI.PROG4.controllers;
 
 import com.example.TPI.PROG4.dtos.request.PronosticoRequest;
+import com.example.TPI.PROG4.dtos.response.PronosticoComunidadResponse;
 import com.example.TPI.PROG4.dtos.response.PronosticoResponse;
 import com.example.TPI.PROG4.models.Usuario;
 import com.example.TPI.PROG4.repositories.UsuarioRepository;
@@ -35,6 +36,25 @@ public class PronosticoController {
             e.printStackTrace();
             return ResponseEntity.badRequest().build();
         }
+    }
+
+    @GetMapping("/partido/{partidoId}/comunidad")
+    public ResponseEntity<?> listarPronosticosComunidad(
+            @PathVariable Long partidoId, Authentication auth) {
+        try {
+            Usuario usuario = getUsuario(auth);
+            List<PronosticoComunidadResponse> result = pronosticoService.obtenerPronosticosComunidad(partidoId, usuario.getId());
+            return ResponseEntity.ok(result);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/mispronosticos")
+    public ResponseEntity<List<PronosticoResponse>> listarMisPronosticos(Authentication auth) {
+        Usuario usuario = getUsuario(auth);
+        List<PronosticoResponse> result = pronosticoService.listarMisPronosticos(usuario.getId());
+        return ResponseEntity.ok(result);
     }
 
     @GetMapping("/partido/{partidoId}")

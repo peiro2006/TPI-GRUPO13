@@ -30,6 +30,36 @@
           <div class="vs">VS</div>
           <div class="equipo visitante">{{ p.visitante }}</div>
         </div>
+        <div class="card-footer">
+          <button class="btn-comunidad" (click)="toggleComunidad(p.idPartido)">
+            {{ comunidadAbierto[p.idPartido] ? 'Ocultar pronósticos' : 'Ver pronósticos de la comunidad' }}
+          </button>
+        </div>
+
+        @if (comunidadAbierto[p.idPartido]) {
+          <div class="comunidad-section">
+            @if (comunidadCargando[p.idPartido]) {
+              <div class="comunidad-cargando">Cargando pronósticos...</div>
+            } @else if (comunidadError[p.idPartido]) {
+              <div class="comunidad-error">{{ comunidadError[p.idPartido] }}</div>
+            } @else if (comunidadMap[p.idPartido]?.length === 0) {
+              <div class="comunidad-vacio">No hay pronósticos de otros usuarios para este partido.</div>
+            } @else {
+              <div class="comunidad-lista">
+                <div class="comunidad-header">
+                  <span class="com-col-usuario">Usuario</span>
+                  <span class="com-col-resultado">Pronóstico</span>
+                </div>
+                @for (c of comunidadMap[p.idPartido]; track $index) {
+                  <div class="comunidad-item">
+                    <span class="com-col-usuario">{{ c.nombreUsuario }} {{ c.apellidoUsuario }}</span>
+                    <span class="com-col-resultado">{{ c.golesLocal }} - {{ c.golesVisitante }}</span>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        }
       </div>
     }
   </div>

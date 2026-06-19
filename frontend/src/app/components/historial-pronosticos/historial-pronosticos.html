@@ -1,0 +1,92 @@
+<div class="page-container">
+  <div class="header">
+    <a routerLink="/" class="back-link">← Volver al inicio</a>
+    <h2>Historial de Pronósticos</h2>
+  </div>
+
+  @if (error) {
+    <div class="error">{{ error }}</div>
+  }
+
+  @if (loading) {
+    <div class="cargando">
+      <span class="cargando-icon">⏳</span>
+      <p>Cargando pronósticos...</p>
+    </div>
+  }
+
+  <div class="filtros">
+    <button class="filtro-btn"
+            [class.activo]="filtroSeleccionado === 'todos'"
+            (click)="seleccionarFiltro('todos')">
+      Todos
+    </button>
+    <button class="filtro-btn filtro-pendiente"
+            [class.activo]="filtroSeleccionado === 'Pendiente'"
+            (click)="seleccionarFiltro('Pendiente')">
+      Pendiente
+    </button>
+    <button class="filtro-btn filtro-enjuego"
+            [class.activo]="filtroSeleccionado === 'En Juego'"
+            (click)="seleccionarFiltro('En Juego')">
+      En Juego
+    </button>
+    <button class="filtro-btn filtro-finalizado"
+            [class.activo]="filtroSeleccionado === 'Finalizado'"
+            (click)="seleccionarFiltro('Finalizado')">
+      Finalizado
+    </button>
+  </div>
+
+  @if (!loading) {
+    <div class="grupos">
+      @for (grupo of grupos; track grupo.estado) {
+        <div class="grupo-card">
+          <div class="grupo-header" [class]="'grupo-' + grupo.estado.toLowerCase().replace(' ', '')">
+            <span class="grupo-titulo">{{ grupo.estado }}</span>
+            <span class="grupo-count">{{ grupo.pronosticos.length }} pronóstico(s)</span>
+          </div>
+          <div class="grupo-body">
+            @for (p of grupo.pronosticos; track p.id) {
+              <div class="pronostico-item">
+                <div class="pronostico-header">
+                  <span class="fecha">{{ p.fechaPartido | date:'dd/MM/yyyy' }}</span>
+                  <span class="pronostico-estado" [class]="'estado-' + mapearEstado(p.estadoPartido).toLowerCase().replace(' ', '')">
+                    {{ p.estadoPartido }}
+                  </span>
+                </div>
+                <div class="pronostico-body">
+                  <div class="equipo-info">
+                    <span class="equipo-nombre">{{ p.local }}</span>
+                    <span class="vs">VS</span>
+                    <span class="equipo-nombre">{{ p.visitante }}</span>
+                  </div>
+                  <div class="resultado-info">
+                    @if (p.golesLocal !== null && p.golesVisitante !== null) {
+                      <span class="tu-pronostico">
+                        Tu pronóstico: {{ p.golesLocal }} - {{ p.golesVisitante }}
+                      </span>
+                    } @else {
+                      <span class="sin-pronostico">Sin pronóstico</span>
+                    }
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      } @empty {
+        <div class="vacio">
+          <span class="vacio-icon">📋</span>
+          <p>
+            @if (filtroSeleccionado === 'todos') {
+              No tienes pronósticos realizados aún.
+            } @else {
+              No hay pronósticos con estado "{{ filtroSeleccionado }}".
+            }
+          </p>
+        </div>
+      }
+    </div>
+  }
+</div>

@@ -7,6 +7,7 @@
     <nav class="nav-links">
       @if (auth.isLoggedIn()) {
         <span class="usuario-greeting">Hola, {{ userName() }}</span>
+        <a routerLink="/historial-pronosticos" class="nav-link">Mis Pronósticos</a>
         <button class="btn-logout" (click)="logout()">Salir</button>
       } @else {
         <a routerLink="/login" class="nav-link">Iniciar Sesión</a>

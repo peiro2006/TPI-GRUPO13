@@ -41,5 +41,10 @@ export const routes: Routes = [
     path: 'equipos',
     canActivate: [authGuard],
     loadComponent: () => import('./equipos/equipos.component').then(m => m.EquiposComponent)
+  },
+  {
+    path: 'historial-pronosticos',
+    canActivate: [authGuard],
+    loadComponent: () => import('./components/historial-pronosticos/historial-pronosticos').then(m => m.HistorialPronosticos)
   }
 ];

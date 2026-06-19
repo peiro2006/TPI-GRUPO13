@@ -1,5 +1,6 @@
 package com.example.TPI.PROG4.services;
 
+import com.example.TPI.PROG4.dtos.response.PronosticoComunidadResponse;
 import com.example.TPI.PROG4.dtos.response.PronosticoResponse;
 import com.example.TPI.PROG4.models.Partido;
 import com.example.TPI.PROG4.models.Pronostico;
@@ -132,6 +133,40 @@ public class PronosticoService {
             }
         });
 
+        return result;
+    }
+
+    public List<PronosticoComunidadResponse> obtenerPronosticosComunidad(Long partidoId, Long usuarioIdExcluir) {
+        Partido partido = partidosRepository.findById(partidoId)
+                .orElseThrow(() -> new RuntimeException("Partido no encontrado"));
+
+        if (esEditable(partido)) {
+            throw new RuntimeException("Los pronósticos de la comunidad no están disponibles hasta que cierre el periodo de apuestas");
+        }
+
+        List<Pronostico> pronosticos = pronosticoRepository.findByPartido_IdPartido(partidoId);
+        List<PronosticoComunidadResponse> result = new ArrayList<>();
+
+        for (Pronostico p : pronosticos) {
+            if (p.getUsuario().getId().equals(usuarioIdExcluir)) continue;
+            result.add(new PronosticoComunidadResponse(
+                    p.getUsuario().getNombre(),
+                    p.getUsuario().getApellido(),
+                    p.getGolesLocal(),
+                    p.getGolesVisitante()
+            ));
+        }
+
+        return result;
+    }
+
+    public List<PronosticoResponse> listarMisPronosticos(Long usuarioId) {
+        List<Pronostico> pronosticos = pronosticoRepository.findByUsuario_Id(usuarioId);
+        List<PronosticoResponse> result = new ArrayList<>();
+        for (Pronostico p : pronosticos) {
+            result.add(toResponse(p, p.getPartido()));
+        }
+        result.sort((a, b) -> a.fechaPartido().compareTo(b.fechaPartido()));
         return result;
     }
 
