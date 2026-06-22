@@ -6,6 +6,7 @@ import com.example.TPI.PROG4.models.Pronostico;
 import com.example.TPI.PROG4.models.Usuario;
 import com.example.TPI.PROG4.repositories.PartidosRepository;
 import com.example.TPI.PROG4.repositories.PronosticoRepository;
+import com.example.TPI.PROG4.repositories.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +25,7 @@ public class PronosticoService {
     private static final Logger log = LoggerFactory.getLogger(PronosticoService.class);
     private final PronosticoRepository pronosticoRepository;
     private final PartidosRepository partidosRepository;
+    private final UsuarioRepository usuarioRepository;
 
     private boolean esEditable(Partido partido) {
         try {
@@ -39,6 +41,9 @@ public class PronosticoService {
 
     @Transactional
     public PronosticoResponse crearOActualizar(Usuario usuario, Long partidoId, Integer golesLocal, Integer golesVisitante) {
+        Usuario usuarioPersistido = usuarioRepository.findById(usuario.getId())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
         Partido partido = partidosRepository.findById(partidoId)
                 .orElseThrow(() -> new RuntimeException("Partido no encontrado"));
 
@@ -61,7 +66,7 @@ public class PronosticoService {
             pronostico.setFechaPronostico(LocalDateTime.now());
         } else {
             pronostico = Pronostico.builder()
-                    .usuario(usuario)
+                    .usuario(usuarioPersistido)
                     .partido(partido)
                     .golesLocal(golesLocal)
                     .golesVisitante(golesVisitante)
@@ -70,7 +75,18 @@ public class PronosticoService {
         }
 
         pronostico = pronosticoRepository.save(pronostico);
+        sincronizarPronosticosUsuario(usuarioPersistido);
         return toResponse(pronostico, partido);
+    }
+
+    private void sincronizarPronosticosUsuario(Usuario usuario) {
+        long cantidadPronosticos = pronosticoRepository.countByUsuario_Id(usuario.getId());
+        if (cantidadPronosticos > Integer.MAX_VALUE) {
+            throw new RuntimeException("Cantidad de pronosticos fuera de rango");
+        }
+
+        usuario.setPronosticos((int) cantidadPronosticos);
+        usuarioRepository.save(usuario);
     }
 
     public PronosticoResponse obtenerPorPartido(Long usuarioId, Long partidoId) {

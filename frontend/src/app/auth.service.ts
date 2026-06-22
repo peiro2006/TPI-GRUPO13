@@ -2,6 +2,10 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 
+interface JwtPayload {
+  exp?: number;
+}
+
 export interface RegisterRequest {
   nombre: string;
   apellido: string;
@@ -80,11 +84,26 @@ export class AuthService {
   }
 
   isLoggedIn(): boolean {
-    return !!localStorage.getItem('token');
+    const token = this.getToken();
+    if (!token) return false;
+
+    if (this.isTokenExpired(token)) {
+      this.logout();
+      return false;
+    }
+
+    return true;
   }
 
   getToken(): string | null {
     return localStorage.getItem('token');
+  }
+
+  isTokenExpired(token: string): boolean {
+    const expiration = this.getTokenExpiration(token);
+    if (!expiration) return true;
+
+    return Date.now() >= expiration * 1000;
   }
 
   getRanking(orden: string = 'desc', clan?: string): Observable<RankingUsuario[]> {
@@ -119,5 +138,32 @@ export class AuthService {
       rol: res.rol,
       clan: res.clan
     }));
+  }
+
+  private getTokenExpiration(token: string): number | null {
+    const payload = this.decodeJwtPayload(token);
+    return typeof payload.exp === 'number' ? payload.exp : null;
+  }
+
+  private decodeJwtPayload(token: string): JwtPayload {
+    try {
+      const payload = token.split('.')[1];
+      if (!payload) return {};
+
+      const normalized = payload.replace(/-/g, '+').replace(/_/g, '/');
+      const padded = normalized.padEnd(
+        normalized.length + (4 - (normalized.length % 4)) % 4,
+        '='
+      );
+      const json = decodeURIComponent(
+        Array.from(atob(padded), char =>
+          `%${char.charCodeAt(0).toString(16).padStart(2, '0')}`
+        ).join('')
+      );
+
+      return JSON.parse(json) as JwtPayload;
+    } catch {
+      return {};
+    }
   }
 }

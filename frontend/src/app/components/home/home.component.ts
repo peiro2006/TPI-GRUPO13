@@ -1,4 +1,3 @@
-import { HttpClient } from '@angular/common/http';
 import { ChangeDetectorRef, Component, computed, inject, OnInit } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
@@ -463,7 +462,6 @@ export class HomeComponent implements OnInit {
   private fechaService = inject(FechaService);
   private router = inject(Router);
   private cdr = inject(ChangeDetectorRef);
-  private http = inject(HttpClient);
 
   fechas: FechaResponse[] = [];
   seccion: 'ranking' | 'pronosticos' | 'perfil' | 'fechas' = 'ranking';
@@ -578,9 +576,7 @@ export class HomeComponent implements OnInit {
     this.pronosticosError = '';
     this.pronosticosExito = '';
 
-    this.http.get<PronosticoPartido[]>('http://localhost:8080/api/pronosticos/proximos', {
-      headers: { Authorization: 'Bearer ' + localStorage.getItem('token') }
-    }).subscribe({
+    this.auth.getPronosticosProximos().subscribe({
       next: (data) => {
         console.log('PRONOSTICOS RESPONSE:', data);
         this.pronosticos = data || [];
@@ -612,11 +608,7 @@ export class HomeComponent implements OnInit {
       golesVisitante: p.golesVisitante
     };
 
-    this.http.put<PronosticoPartido>(
-      'http://localhost:8080/api/pronosticos/partido/' + p.partidoId,
-      data,
-      { headers: { Authorization: 'Bearer ' + localStorage.getItem('token') } }
-    ).subscribe({
+    this.auth.guardarPronostico(p.partidoId, data).subscribe({
       next: (res) => {
         p.id = res.id;
         p.golesLocal = res.golesLocal;

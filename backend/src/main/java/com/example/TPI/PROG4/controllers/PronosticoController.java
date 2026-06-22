@@ -23,18 +23,8 @@ public class PronosticoController {
 
     @GetMapping("/proximos")
     public ResponseEntity<List<PronosticoResponse>> listarProximos(Authentication auth) {
-        System.out.println("==== PRONOSTICOS /proximos llamado ====");
-        try {
-            Usuario usuario = getUsuario(auth);
-            System.out.println("==== Usuario: " + usuario.getEmail() + " ====");
-            List<PronosticoResponse> result = pronosticoService.listarProximos(usuario.getId());
-            System.out.println("==== Resultados: " + result.size() + " ====");
-            return ResponseEntity.ok(result);
-        } catch (Exception e) {
-            System.out.println("==== ERROR: " + e.getMessage() + " ====");
-            e.printStackTrace();
-            return ResponseEntity.badRequest().build();
-        }
+        Usuario usuario = getUsuario(auth);
+        return ResponseEntity.ok(pronosticoService.listarProximos(usuario.getId()));
     }
 
     @GetMapping("/partido/{partidoId}")
