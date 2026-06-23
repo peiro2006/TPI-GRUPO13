@@ -1,20 +1,21 @@
-<h2>Gestión de Fechas</h2>
-
-@if (mensajeError) {
-<div style="color: red; margin-bottom: 1rem">{{ mensajeError }}</div>
-}
-
-<div style="margin-bottom: 16px;">
-  <button (click)="mostrarAgregar()">+ Agregar Fecha</button>
+<div class="page-header">
+  <h2>Gestión de Fechas</h2>
+  <button class="btn-agregar" (click)="mostrarAgregar()">+ Agregar Fecha</button>
 </div>
 
+@if (mensajeError) {
+<div class="error-msg">{{ mensajeError }}</div>
+}
+
 @if (mostrarFormulario) {
-<div style="margin-bottom: 16px; padding: 12px; background: #fff; border-radius: 6px; box-shadow: 0 1px 4px rgba(0,0,0,0.1);">
-  <input #nuevaFechaInput [(ngModel)]="nuevaFechaNombre" placeholder="Nombre de la fecha" style="margin-right: 8px;" />
-  <input type="date" [(ngModel)]="nuevaFechaInicio" placeholder="Inicio" style="margin-right: 8px;" />
-  <input type="date" [(ngModel)]="nuevaFechaFin" placeholder="Fin" style="margin-right: 8px;" />
-  <button (click)="agregarFecha()">Guardar</button>
-  <button (click)="cancelarAgregar()">Cancelar</button>
+<div class="form-card">
+  <input #nuevaFechaInput [(ngModel)]="nuevaFechaNombre" placeholder="Nombre de la fecha" />
+  <input type="date" [(ngModel)]="nuevaFechaInicio" placeholder="Inicio" />
+  <input type="date" [(ngModel)]="nuevaFechaFin" placeholder="Fin" />
+  <div class="btn-group">
+    <button (click)="agregarFecha()">Guardar</button>
+    <button (click)="cancelarAgregar()">Cancelar</button>
+  </div>
 </div>
 }
 
@@ -46,13 +47,13 @@
       @if (editandoId === fecha.idFecha) {
       <input type="date" [(ngModel)]="inicioEditando" style="margin-right: 4px;" />
       } @else {
-      {{ fecha.inicioFecha | date:'short' }}
+      {{ fecha.inicioFecha | date:'dd/MM/yyyy' }}
       }
     </td>
     <td>@if (editandoId === fecha.idFecha) {
       <input type="date" [(ngModel)]="finEditando" style="margin-right: 4px;" />
       } @else {
-      {{ fecha.finFecha | date:'short' }}
+      {{ fecha.finFecha | date:'dd/MM/yyyy' }}
       }</td>
     <td>
       @if (editandoId !== fecha.idFecha) {

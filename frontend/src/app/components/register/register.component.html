@@ -79,9 +79,11 @@
           #password="ngModel"
           placeholder="Mín. 8 caracteres, mayúscula, minúscula y número"
         />
-        <small class="hint-text">Mín. 8 caracteres, debe incluir mayúscula, minúscula y número</small>
         @if (password.invalid && (password.dirty || password.touched) && password.errors?.['minlength']) {
           <small class="error-text">La contraseña debe tener al menos 8 caracteres</small>
+        }
+        @for (w of passwordWarnings; track w) {
+          <small class="warning-text">{{ w }}</small>
         }
         @if (fieldErrors['password']) {
           <small class="error-text">{{ fieldErrors['password'] }}</small>

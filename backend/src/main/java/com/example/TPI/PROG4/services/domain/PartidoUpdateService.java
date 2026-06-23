@@ -4,12 +4,15 @@ import com.example.TPI.PROG4.Interfaces.IPartidoUpdateService;
 import com.example.TPI.PROG4.dtos.request.PartidoUpdateReqDto;
 import com.example.TPI.PROG4.dtos.response.PartidoCreateResDto;
 import com.example.TPI.PROG4.mappers.PartidoMapper;
+import com.example.TPI.PROG4.models.Fecha;
 import com.example.TPI.PROG4.models.Partido;
 import com.example.TPI.PROG4.repositories.PartidosRepository;
 import com.example.TPI.PROG4.services.FechaService;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
 
 @Service
 @AllArgsConstructor
@@ -23,6 +26,15 @@ public class PartidoUpdateService implements IPartidoUpdateService {
     public PartidoCreateResDto execute(Long id, PartidoUpdateReqDto request) {
         Partido partido = partidosRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Partido no encontrado"));
+
+        if (request.fechaPartido() != null) {
+            Fecha fecha = partido.getFecha();
+            LocalDate nuevaFecha = request.fechaPartido();
+            if (fecha.getInicioFecha() != null && fecha.getFinFecha() != null
+                    && (nuevaFecha.isBefore(fecha.getInicioFecha()) || nuevaFecha.isAfter(fecha.getFinFecha()))) {
+                throw new RuntimeException("La fecha del partido debe estar entre " + fecha.getInicioFecha() + " y " + fecha.getFinFecha());
+            }
+        }
 
         Partido updated = PartidoMapper.applyUpdate(partido, request);
         Partido saved = partidosRepository.save(updated);

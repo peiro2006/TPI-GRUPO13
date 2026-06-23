@@ -54,6 +54,10 @@ export class FechasComponent implements OnInit {
 
   agregarFecha() {
     if (!this.nuevaFechaNombre.trim()) return;
+    if (this.nuevaFechaInicio && this.nuevaFechaFin && this.nuevaFechaFin < this.nuevaFechaInicio) {
+      this.mensajeError = 'La fecha de fin no puede ser anterior a la fecha de inicio';
+      return;
+    }
     this.fechaService.crear(
       this.nuevaFechaNombre.trim(),
       this.nuevaFechaInicio || null,
@@ -100,6 +104,11 @@ export class FechasComponent implements OnInit {
     this.guardando = true;
     this.mensajeError = '';
     this.cdr.detectChanges();
+    if (this.inicioEditando && this.finEditando && this.finEditando < this.inicioEditando) {
+      this.mensajeError = 'La fecha de fin no puede ser anterior a la fecha de inicio';
+      this.guardando = false;
+      return;
+    }
     this.fechaService.actualizar(id, this.nombreEditando.trim(), this.inicioEditando || null, this.finEditando || null).subscribe({
       next: () => {
         this.editandoId = null;

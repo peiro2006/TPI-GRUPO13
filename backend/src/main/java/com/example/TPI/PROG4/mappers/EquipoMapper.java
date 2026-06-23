@@ -13,6 +13,7 @@ public class EquipoMapper {
                 .nombreCorto(request.nombre_corto())
                 .nombreEquipo(request.nombre_equipo())
                 .descripcionEquipo(request.descripcion())
+                .banderaCodigo(request.bandera_codigo())
                 .build();
     }
 
@@ -22,6 +23,7 @@ public class EquipoMapper {
                 equipo.getNombreEquipo(),
                 equipo.getDescripcionEquipo(),
                 equipo.getNombreCorto(),
+                equipo.getBanderaCodigo(),
                 equipo.isEstadoEquipo()
         );
 

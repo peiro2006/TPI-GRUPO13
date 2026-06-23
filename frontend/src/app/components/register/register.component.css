@@ -116,6 +116,8 @@
   transition: all 0.2s;
   outline: none;
   background: #fafafa;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .form-group input:focus {
@@ -134,10 +136,14 @@
   color: #d32f2f;
 }
 
-.hint-text {
+.hint-text,
+.warning-text {
   font-family: 'Inter', sans-serif;
   font-size: 11px;
   color: #888;
+}
+.warning-text {
+  color: #e65100;
 }
 
 .error-msg {
@@ -195,6 +201,11 @@
 }
 
 @media (max-width: 480px) {
+  .auth-page { padding: 20px 12px; }
   .auth-card { padding: 28px 20px; }
+  .auth-header h1 { font-size: 24px; }
+  .ball-icon { font-size: 40px; }
   .row { grid-template-columns: 1fr; }
+  .form-group input { padding: 10px 14px; font-size: 14px; }
+  .btn-submit { padding: 12px; font-size: 15px; }
 }

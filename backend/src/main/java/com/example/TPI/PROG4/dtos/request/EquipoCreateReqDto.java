@@ -14,7 +14,10 @@ public record EquipoCreateReqDto (
 
         @NotBlank(message = "Debe ingresar un nombre corto para el equipo")
         @Size(min = 3, max = 3, message = "El nombre corto debe ser solo de 3 letras")
-        String nombre_corto
+        String nombre_corto,
+
+        @Size(min = 2, max = 2, message = "El código de bandera debe ser de 2 letras (ej: ar, us, br)")
+        String bandera_codigo
 ){
 
 

@@ -103,6 +103,8 @@
   transition: all 0.2s;
   outline: none;
   background: #fafafa;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .form-group input:focus {
@@ -172,4 +174,13 @@
 
 .auth-footer a:hover {
   text-decoration: underline;
+}
+
+@media (max-width: 480px) {
+  .auth-page { padding: 20px 12px; }
+  .auth-card { padding: 28px 20px; }
+  .auth-header h1 { font-size: 24px; }
+  .ball-icon { font-size: 40px; }
+  .form-group input { padding: 10px 14px; font-size: 14px; }
+  .btn-submit { padding: 12px; font-size: 15px; }
 }

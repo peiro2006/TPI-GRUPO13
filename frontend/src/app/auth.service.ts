@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
+import { environment } from '../environments/environment';
 
 interface JwtPayload {
   exp?: number;
@@ -60,9 +61,9 @@ export interface PronosticoRequest {
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private readonly API_URL = 'http://localhost:8080/api/auth';
-  private readonly RANKING_URL = 'http://localhost:8080/api/ranking';
-  private readonly PRONOSTICO_URL = 'http://localhost:8080/api/pronosticos';
+  private readonly API_URL = `${environment.apiUrl}/api/auth`;
+  private readonly RANKING_URL = `${environment.apiUrl}/api/ranking`;
+  private readonly PRONOSTICO_URL = `${environment.apiUrl}/api/pronosticos`;
 
   constructor(private http: HttpClient) {}
 
@@ -122,6 +123,10 @@ export class AuthService {
 
   getPronosticosProximos(): Observable<PronosticoPartido[]> {
     return this.http.get<PronosticoPartido[]>(`${this.PRONOSTICO_URL}/proximos`);
+  }
+
+  getPronosticosUsuario(id: number): Observable<PronosticoPartido[]> {
+    return this.http.get<PronosticoPartido[]>(`${this.PRONOSTICO_URL}/usuario/${id}`);
   }
 
   guardarPronostico(partidoId: number, data: PronosticoRequest): Observable<PronosticoPartido> {

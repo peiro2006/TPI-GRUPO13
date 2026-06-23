@@ -1,6 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 export interface FechaResponse {
   idFecha: number;
@@ -13,7 +14,7 @@ export interface FechaResponse {
 @Injectable({ providedIn: 'root' })
 export class FechaService {
   private readonly http = inject(HttpClient);
-  private readonly apiUrl = 'http://localhost:8080/api/fechas';
+  private readonly apiUrl = `${environment.apiUrl}/api/fechas`;
 
 
   listar(orden: string = 'asc'): Observable<FechaResponse[]> {

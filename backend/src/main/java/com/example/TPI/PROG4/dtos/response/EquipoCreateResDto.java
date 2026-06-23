@@ -6,6 +6,7 @@ public record EquipoCreateResDto (
         String nombre_equipo,
         String descripcion,
         String nombre_corto,
+        String bandera_codigo,
         boolean estado_equipo
 
 ) {

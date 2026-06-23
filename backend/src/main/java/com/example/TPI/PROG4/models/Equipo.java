@@ -39,6 +39,10 @@ public class Equipo {
     @Column(name = "nombre_corto")
     private String nombreCorto;
 
+    @Size(min = 2, max = 2, message = "El código de bandera debe ser de 2 letras (ej: ar, us, br)")
+    @Column(name = "bandera_codigo")
+    private String banderaCodigo;
+
     @Builder.Default
     @Column(name = "estado_equipo")
     private boolean estadoEquipo = true; /* ACTIVO - INACTIVO */

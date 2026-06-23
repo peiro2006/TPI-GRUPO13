@@ -156,3 +156,21 @@ a:hover {
 .sin-resultado {
   color: #ccc;
 }
+
+@media (max-width: 768px) {
+  h2 { font-size: 18px; }
+  table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  th, td { white-space: nowrap; padding: 8px 6px; font-size: 12px; }
+  .form-card { padding: 12px; }
+  .form-card input, .form-card select { width: 100%; margin: 4px 0; box-sizing: border-box; }
+  .goles-input { width: 40px; font-size: 13px; }
+  .acciones { gap: 4px; }
+  button { padding: 6px 12px; font-size: 12px; }
+}
+
+@media (max-width: 480px) {
+  .form-card input, .form-card select { font-size: 13px; padding: 6px 8px; }
+  .resultado-form { flex-wrap: wrap; }
+  .goles-input { width: 36px; }
+  th:nth-child(2), td:nth-child(2) { display: none; }
+}

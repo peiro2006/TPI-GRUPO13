@@ -11,4 +11,6 @@ public interface PronosticoRepository extends JpaRepository<Pronostico, Long> {
     Optional<Pronostico> findByUsuario_IdAndPartido_IdPartido(Long usuarioId, Long partidoId);
     List<Pronostico> findByUsuario_Id(Long usuarioId);
     long countByUsuario_Id(Long usuarioId);
+    List<Pronostico> findByPartido_IdPartido(Long partidoId);
+    void deleteByPartido_IdPartido(Long partidoId);
 }

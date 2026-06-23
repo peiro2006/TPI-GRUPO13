@@ -105,6 +105,18 @@ public class PronosticoService {
                 ));
     }
 
+    public List<PronosticoResponse> listarPorUsuario(Long usuarioId) {
+        List<Pronostico> pronosticos = pronosticoRepository.findByUsuario_Id(usuarioId);
+        return pronosticos.stream()
+                .map(p -> toResponse(p, p.getPartido()))
+                .sorted((a, b) -> {
+                    int cmp = b.fechaPartido().compareTo(a.fechaPartido());
+                    if (cmp != 0) return cmp;
+                    return b.horaPartido().compareTo(a.horaPartido());
+                })
+                .toList();
+    }
+
     public List<PronosticoResponse> listarProximos(Long usuarioId) {
         List<Partido> partidos;
         try {

@@ -450,10 +450,31 @@ import { FechaService, FechaResponse } from '../../services/fecha.service';
     .perfil-info p { font-size: 14px; color: #444; margin: 4px 0; }
     .perfil-info strong { color: #1a472a; }
 
-    @media (max-width: 700px) { .paneles { grid-template-columns: repeat(2, 1fr); } }
-    @media (max-width: 480px) {
-      .paneles { grid-template-columns: 1fr; }
+    @media (max-width: 900px) { .paneles { grid-template-columns: repeat(2, 1fr); gap: 12px; } }
+    @media (max-width: 600px) {
+      .home-page { padding: 20px 12px; }
+      .hero { margin-bottom: 20px; }
+      .ball-icon { font-size: 48px; }
+      .hero h1 { font-size: 28px; }
+      .paneles { grid-template-columns: 1fr; gap: 10px; }
+      .panel { padding: 20px 16px; flex-direction: row; text-align: left; gap: 12px; }
+      .panel-icon { font-size: 28px; }
+      .panel-titulo { font-size: 15px; }
+      .panel-desc { display: none; }
+      .puntero-card { padding: 24px 16px; }
+      .puntero-nombre { font-size: 22px; }
+      .puntero-stats { gap: 16px; }
+      .filtros { flex-direction: column; align-items: stretch; gap: 10px; }
+      .tabla-ranking th, .tabla-ranking td { padding: 10px 8px; font-size: 12px; }
+      .pronosticos-lista { gap: 12px; }
       .pronostico-card-body { flex-direction: column; gap: 12px; }
+      .goles-input { width: 52px; height: 52px; font-size: 20px; }
+      .marcador-inputs { gap: 8px; }
+      .equipo-nombre { font-size: 14px; }
+      .perfil-card { padding: 28px 20px; }
+      .perfil-stats { gap: 20px; }
+      .perfil-stat-valor { font-size: 22px; }
+      .perfil-info p { font-size: 13px; }
     }
   `]
 })

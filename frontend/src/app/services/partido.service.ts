@@ -1,6 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 export interface PartidoResponse {
   idPartido: number;
@@ -36,7 +37,7 @@ export interface ResultadoRequest {
 @Injectable({ providedIn: 'root' })
 export class PartidoService {
   private readonly http = inject(HttpClient);
-  private readonly apiUrl = 'http://localhost:8080/partidos';
+  private readonly apiUrl = `${environment.apiUrl}/partidos`;
 
   listar(): Observable<PartidoResponse[]> {
     return this.http.get<PartidoResponse[]>(this.apiUrl);

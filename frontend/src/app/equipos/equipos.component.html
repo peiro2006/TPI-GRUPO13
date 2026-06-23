@@ -7,7 +7,7 @@
     </div>
 
     <div class="contador">
-      <span class="contador-numero">{{ equipos.length }}</span>
+      <span class="contador-numero">{{ equiposActivos.length }}</span>
       <span class="contador-label">de 32</span>
     </div>
   </section>
@@ -67,7 +67,11 @@
                 <tr [class.seleccionado]="equipoSeleccionado?.id_equipo === equipo.id_equipo">
                   <td>
                     <button type="button" class="equipo-link" (click)="seleccionarEquipo(equipo)">
-                      <span class="escudo">{{ iniciales(equipo) }}</span>
+                      @if (equipo.bandera_codigo) {
+                        <img [src]="flagSrc(equipo.bandera_codigo)" alt="" class="flag-icon" />
+                      } @else {
+                        <span class="escudo">{{ iniciales(equipo) }}</span>
+                      }
                       <span>{{ equipo.nombre_equipo }}</span>
                     </button>
                   </td>
@@ -112,7 +116,11 @@
                 <tr [class.seleccionado]="equipoSeleccionado?.id_equipo === equipo.id_equipo">
                   <td>
                     <button type="button" class="equipo-link inactivo" (click)="seleccionarEquipo(equipo)">
-                      <span class="escudo">{{ iniciales(equipo) }}</span>
+                      @if (equipo.bandera_codigo) {
+                        <img [src]="flagSrc(equipo.bandera_codigo)" alt="" class="flag-icon" />
+                      } @else {
+                        <span class="escudo">{{ iniciales(equipo) }}</span>
+                      }
                       <span>{{ equipo.nombre_equipo }}</span>
                     </button>
                   </td>
@@ -168,6 +176,40 @@
             />
           </div>
 
+          <div class="form-group bandera-group">
+            <label>Bandera</label>
+            <div class="bandera-selector">
+              <button type="button" class="bandera-preview" (click)="mostrarBanderas = !mostrarBanderas" [disabled]="limiteAlcanzado || guardando">
+                @if (nuevoEquipo.bandera_codigo) {
+                  <img [src]="flagSrc(nuevoEquipo.bandera_codigo)" alt="" class="flag-sm" />
+                  <span class="pais-codigo">{{ nuevoEquipo.bandera_codigo }}</span>
+                } @else {
+                  <span class="sin-bandera">Elegir bandera</span>
+                }
+                <span class="flecha">{{ mostrarBanderas ? '▲' : '▼' }}</span>
+              </button>
+              @if (nuevoEquipo.bandera_codigo) {
+                <button type="button" class="btn-limpiar" (click)="nuevoEquipo.bandera_codigo = ''; mostrarBanderas = false;" title="Quitar bandera">×</button>
+              }
+            </div>
+            @if (mostrarBanderas) {
+              <div class="bandera-grid">
+                @for (pais of paises; track pais.codigo) {
+                  <button
+                    type="button"
+                    class="bandera-item"
+                    [class.seleccionada]="nuevoEquipo.bandera_codigo === pais.codigo"
+                    (click)="seleccionarBandera(pais.codigo)"
+                    [title]="pais.nombre"
+                  >
+                    <img [src]="flagSrc(pais.codigo)" alt="" class="flag-sm" />
+                    <span class="pais-codigo">{{ pais.codigo }}</span>
+                  </button>
+                }
+              </div>
+            }
+          </div>
+
           <div class="form-group">
             <label for="descripcionEquipo">Descripcion</label>
             <textarea
@@ -194,7 +236,13 @@
         <h2>Detalle</h2>
 
         @if (equipoSeleccionado) {
-          <div class="detalle-escudo">{{ iniciales(equipoSeleccionado) }}</div>
+          <div class="detalle-header">
+            @if (equipoSeleccionado.bandera_codigo) {
+              <img [src]="flagSrc(equipoSeleccionado.bandera_codigo)" alt="" class="flag-large" />
+            } @else {
+              <div class="detalle-escudo">{{ iniciales(equipoSeleccionado) }}</div>
+            }
+          </div>
           <h3>{{ equipoSeleccionado.nombre_equipo }}</h3>
           <p class="codigo-grande">{{ equipoSeleccionado.nombre_corto }}</p>
           <span class="pill" [class.activo]="equipoSeleccionado.estado_equipo" [class.inactivo]="!equipoSeleccionado.estado_equipo">

@@ -34,6 +34,11 @@ public class PronosticoController {
         return ResponseEntity.ok(pronosticoService.obtenerPorPartido(usuario.getId(), partidoId));
     }
 
+    @GetMapping("/usuario/{usuarioId}")
+    public ResponseEntity<List<PronosticoResponse>> listarPorUsuario(@PathVariable Long usuarioId) {
+        return ResponseEntity.ok(pronosticoService.listarPorUsuario(usuarioId));
+    }
+
     @PutMapping("/partido/{partidoId}")
     public ResponseEntity<PronosticoResponse> guardarPronostico(
             @PathVariable Long partidoId,

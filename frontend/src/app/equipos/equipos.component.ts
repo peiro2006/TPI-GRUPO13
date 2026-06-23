@@ -23,6 +23,66 @@ export class EquiposComponent implements OnInit {
   eliminandoId: number | null = null;
   error = '';
   mensaje = '';
+  readonly flagUrl = 'https://flagcdn.com/24x18';
+  readonly paises = [
+    { codigo: 'ar', nombre: 'Argentina' },
+    { codigo: 'bo', nombre: 'Bolivia' },
+    { codigo: 'br', nombre: 'Brasil' },
+    { codigo: 'cl', nombre: 'Chile' },
+    { codigo: 'co', nombre: 'Colombia' },
+    { codigo: 'cr', nombre: 'Costa Rica' },
+    { codigo: 'cu', nombre: 'Cuba' },
+    { codigo: 'do', nombre: 'Rep. Dominicana' },
+    { codigo: 'ec', nombre: 'Ecuador' },
+    { codigo: 'sv', nombre: 'El Salvador' },
+    { codigo: 'gt', nombre: 'Guatemala' },
+    { codigo: 'hn', nombre: 'Honduras' },
+    { codigo: 'mx', nombre: 'México' },
+    { codigo: 'ni', nombre: 'Nicaragua' },
+    { codigo: 'pa', nombre: 'Panamá' },
+    { codigo: 'py', nombre: 'Paraguay' },
+    { codigo: 'pe', nombre: 'Perú' },
+    { codigo: 'uy', nombre: 'Uruguay' },
+    { codigo: 've', nombre: 'Venezuela' },
+    { codigo: 'us', nombre: 'Estados Unidos' },
+    { codigo: 'ca', nombre: 'Canadá' },
+    { codigo: 'es', nombre: 'España' },
+    { codigo: 'fr', nombre: 'Francia' },
+    { codigo: 'de', nombre: 'Alemania' },
+    { codigo: 'it', nombre: 'Italia' },
+    { codigo: 'pt', nombre: 'Portugal' },
+    { codigo: 'gb', nombre: 'Reino Unido' },
+    { codigo: 'nl', nombre: 'Países Bajos' },
+    { codigo: 'be', nombre: 'Bélgica' },
+    { codigo: 'ch', nombre: 'Suiza' },
+    { codigo: 'se', nombre: 'Suecia' },
+    { codigo: 'no', nombre: 'Noruega' },
+    { codigo: 'dk', nombre: 'Dinamarca' },
+    { codigo: 'pl', nombre: 'Polonia' },
+    { codigo: 'ua', nombre: 'Ucrania' },
+    { codigo: 'hr', nombre: 'Croacia' },
+    { codigo: 'rs', nombre: 'Serbia' },
+    { codigo: 'gr', nombre: 'Grecia' },
+    { codigo: 'tr', nombre: 'Turquía' },
+    { codigo: 'ru', nombre: 'Rusia' },
+    { codigo: 'jp', nombre: 'Japón' },
+    { codigo: 'kr', nombre: 'Corea del Sur' },
+    { codigo: 'sa', nombre: 'Arabia Saudita' },
+    { codigo: 'ir', nombre: 'Irán' },
+    { codigo: 'au', nombre: 'Australia' },
+    { codigo: 'nz', nombre: 'Nueva Zelanda' },
+    { codigo: 'ma', nombre: 'Marruecos' },
+    { codigo: 'dz', nombre: 'Argelia' },
+    { codigo: 'tn', nombre: 'Túnez' },
+    { codigo: 'eg', nombre: 'Egipto' },
+    { codigo: 'ng', nombre: 'Nigeria' },
+    { codigo: 'cm', nombre: 'Camerún' },
+    { codigo: 'gh', nombre: 'Ghana' },
+    { codigo: 'sn', nombre: 'Senegal' },
+    { codigo: 'ci', nombre: 'Costa de Marfil' },
+    { codigo: 'ml', nombre: 'Malí' },
+  ];
+  mostrarBanderas = false;
 
   ngOnInit(): void {
     this.cargarEquipos();
@@ -51,11 +111,11 @@ export class EquiposComponent implements OnInit {
   }
 
   get limiteAlcanzado(): boolean {
-    return this.equipos.length >= this.limiteEquipos;
+    return this.equiposActivos.length >= this.limiteEquipos;
   }
 
   get cuposDisponibles(): number {
-    return Math.max(this.limiteEquipos - this.equipos.length, 0);
+    return Math.max(this.limiteEquipos - this.equiposActivos.length, 0);
   }
 
   cargarEquipos(): void {
@@ -118,7 +178,8 @@ export class EquiposComponent implements OnInit {
     const request: EquipoCreateRequest = {
       nombre_equipo: this.nuevoEquipo.nombre_equipo.trim(),
       nombre_corto: this.nuevoEquipo.nombre_corto.trim().toUpperCase(),
-      descripcion: this.nuevoEquipo.descripcion?.trim() || undefined
+      descripcion: this.nuevoEquipo.descripcion?.trim() || undefined,
+      bandera_codigo: this.nuevoEquipo.bandera_codigo?.trim().toLowerCase() || undefined
     };
 
     this.equiposService.crear(request).subscribe({
@@ -177,11 +238,21 @@ export class EquiposComponent implements OnInit {
       .toUpperCase();
   }
 
+  seleccionarBandera(codigo: string): void {
+    this.nuevoEquipo.bandera_codigo = codigo;
+    this.mostrarBanderas = false;
+  }
+
+  flagSrc(codigo: string | null | undefined): string {
+    return codigo ? `${this.flagUrl}/${codigo.toLowerCase()}.png` : '';
+  }
+
   private formularioVacio(): EquipoCreateRequest {
     return {
       nombre_equipo: '',
       nombre_corto: '',
-      descripcion: ''
+      descripcion: '',
+      bandera_codigo: ''
     };
   }
 

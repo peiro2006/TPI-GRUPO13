@@ -26,6 +26,14 @@ export class RegisterComponent {
   fieldErrors: Record<string, string> = {};
   loading = false;
 
+  get passwordWarnings(): string[] {
+    const msgs: string[] = [];
+    if (!this.data.password) return msgs;
+    if (!/[A-Z]/.test(this.data.password)) msgs.push('Debe tener al menos una mayúscula');
+    if (!/[0-9]/.test(this.data.password)) msgs.push('Debe tener al menos un número');
+    return msgs;
+  }
+
   register(): void {
     if (this.loading) return;
     this.error = '';

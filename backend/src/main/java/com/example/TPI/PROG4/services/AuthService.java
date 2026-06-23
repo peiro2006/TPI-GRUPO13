@@ -27,6 +27,14 @@ public class AuthService {
             throw new RuntimeException("El email ya está registrado");
         }
 
+        String password = request.getPassword();
+        if (!password.matches(".*[A-Z].*")) {
+            throw new RuntimeException("La contraseña debe contener al menos una mayúscula");
+        }
+        if (!password.matches(".*[0-9].*")) {
+            throw new RuntimeException("La contraseña debe contener al menos un número");
+        }
+
         var user = Usuario.builder()
                 .nombre(request.getNombre())
                 .apellido(request.getApellido())

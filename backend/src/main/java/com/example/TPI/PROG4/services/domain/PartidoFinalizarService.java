@@ -6,6 +6,9 @@ import com.example.TPI.PROG4.dtos.response.PartidoCreateResDto;
 import com.example.TPI.PROG4.mappers.PartidoMapper;
 import com.example.TPI.PROG4.models.Partido;
 import com.example.TPI.PROG4.repositories.PartidosRepository;
+import com.example.TPI.PROG4.services.FechaService;
+import com.example.TPI.PROG4.services.PronosticoPuntosService;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,8 +19,11 @@ import java.time.LocalDateTime;
 public class PartidoFinalizarService implements IPartidoFinalizarService {
 
     private final PartidosRepository partidosRepository;
+    private final PronosticoPuntosService pronosticoPuntosService;
+    private final FechaService fechaService;
 
     @Override
+    @Transactional
     public PartidoCreateResDto execute(Long id, ResultadoRequestDto request) {
         Partido partido = partidosRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Partido no encontrado"));
@@ -40,6 +46,9 @@ public class PartidoFinalizarService implements IPartidoFinalizarService {
                 .estadoPartido("Finalizado")
                 .build();
 
-        return PartidoMapper.toResponseDto(partidosRepository.save(updated));
+        Partido saved = partidosRepository.save(updated);
+        pronosticoPuntosService.calcularPuntos(saved);
+        fechaService.actualizarEstadoFecha(saved.getFecha());
+        return PartidoMapper.toResponseDto(saved);
     }
 }

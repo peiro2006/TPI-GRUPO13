@@ -57,6 +57,16 @@ public class RankingService {
     public RankingResponse obtenerPerfil(Long id) {
         Usuario u = usuarioRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        List<Usuario> ranking = usuarioRepository.findAllByOrderByPuntosDescPronosticosAsc();
+        int posicion = 0;
+        for (int i = 0; i < ranking.size(); i++) {
+            if (ranking.get(i).getId().equals(id)) {
+                posicion = i + 1;
+                break;
+            }
+        }
+
         return RankingResponse.builder()
                 .id(u.getId())
                 .nombre(u.getNombre())
@@ -65,6 +75,7 @@ public class RankingService {
                 .clan(u.getClan())
                 .puntos(u.getPuntos())
                 .pronosticos(u.getPronosticos())
+                .posicion(posicion)
                 .build();
     }
 }

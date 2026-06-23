@@ -1,12 +1,14 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 export interface Equipo {
   id_equipo: number;
   nombre_equipo: string;
   descripcion: string | null;
   nombre_corto: string;
+  bandera_codigo: string | null;
   estado_equipo: boolean;
 }
 
@@ -14,6 +16,7 @@ export interface EquipoCreateRequest {
   nombre_equipo: string;
   descripcion?: string;
   nombre_corto: string;
+  bandera_codigo?: string;
 }
 
 interface BaseResponse<T> {
@@ -25,7 +28,7 @@ interface BaseResponse<T> {
 
 @Injectable({ providedIn: 'root' })
 export class EquiposService {
-  private readonly API_URL = 'http://localhost:8080/equipo';
+  private readonly API_URL = `${environment.apiUrl}/equipo`;
 
   constructor(private http: HttpClient) {}
 
