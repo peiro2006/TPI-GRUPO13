@@ -8,5 +8,6 @@ public record PartidoCreateResDto (
         LocalDate fechaPartido,
         String visitante,
         String local,
+        String resultadoPartido,
         String estadoPartido
 ) {}

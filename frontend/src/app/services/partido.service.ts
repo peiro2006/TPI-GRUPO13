@@ -8,18 +8,19 @@ export interface PartidoResponse {
   fechaPartido: string;
   visitante: string;
   local: string;
+  resultadoPartido: string;
   estadoPartido: string;
 }
-
 export interface PartidoRequest {
   idFecha: number;
   fechaPartido: string;
   visitante: string;
   local: string;
 }
-
 export interface PartidoUpdateRequest {
-  fechaPartido: string;
+  fechaPartido?: string;
+  resultadoPartido?: string;
+  estadoPartido?: string;
 }
 
 @Injectable({ providedIn: 'root' })

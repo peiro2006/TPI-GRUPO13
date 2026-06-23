@@ -6,6 +6,8 @@ import com.example.TPI.PROG4.dtos.response.PartidoCreateResDto;
 import com.example.TPI.PROG4.mappers.PartidoMapper;
 import com.example.TPI.PROG4.models.Partido;
 import com.example.TPI.PROG4.repositories.PartidosRepository;
+import com.example.TPI.PROG4.services.FechaService;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,17 +16,19 @@ import org.springframework.stereotype.Service;
 public class PartidoUpdateService implements IPartidoUpdateService {
 
     private final PartidosRepository partidosRepository;
+    private final FechaService fechaService;
 
     @Override
+    @Transactional
     public PartidoCreateResDto execute(Long id, PartidoUpdateReqDto request) {
         Partido partido = partidosRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Partido no encontrado"));
 
-        if (!"Por jugarse".equals(partido.getEstadoPartido())) {
-            throw new RuntimeException("Solo se puede modificar un partido en estado programado");
-        }
+        Partido updated = PartidoMapper.applyUpdate(partido, request);
+        Partido saved = partidosRepository.save(updated);
 
-        Partido updated = PartidoMapper.updateFechaPartido(partido, request.fechaPartido());
-        return PartidoMapper.toResponseDto(partidosRepository.save(updated));
+        fechaService.actualizarEstadoFecha(saved.getFecha());
+
+        return PartidoMapper.toResponseDto(saved);
     }
 }

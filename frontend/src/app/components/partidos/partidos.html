@@ -28,36 +28,46 @@
       <th>Fecha</th>
       <th>Local</th>
       <th>Visitante</th>
+      <th>Resultado</th>
       <th>Estado</th>
       <th>Acciones</th>
     </tr>
   </thead>
   <tbody>
-    @for (p of partidos; track p.idPartido) {
-    <tr>
-      <td>
-        @if (editandoId === p.idPartido) {
-          <input type="date" [(ngModel)]="fechaEditando" (keyup.enter)="guardarEdicion(p.idPartido)" />
+  @for (p of partidos; track p.idPartido) {
+  <tr>
+    <td>
+      @if (editandoId === p.idPartido) {
+        <input type="date" [(ngModel)]="fechaEditando" />
+        <button (click)="guardarEdicion(p.idPartido)">Guardar</button>
+        <button (click)="cancelarEdicion()">Cancelar</button>
+      } @else {
+        {{ p.fechaPartido }}
+      }
+    </td>
+    <td>{{ p.local }}</td>
+    <td>{{ p.visitante }}</td>
+    <td>{{ p.resultadoPartido || '-' }}</td>
+    <td>{{ p.estadoPartido }}</td>
+    <td class="acciones">
+      @if (p.estadoPartido === 'Programado' || p.estadoPartido === 'Por jugarse') {
+        <button (click)="iniciarPartido(p.idPartido)">Iniciar</button>
+        <button class="btn-edit" (click)="empezarEditar(p)">Editar</button>
+        <button class="btn-delete" (click)="eliminar(p.idPartido)">Eliminar</button>
+      } @else if (p.estadoPartido === 'En juego') {
+        @if (editandoResultadoId === p.idPartido) {
+          <input [(ngModel)]="resultadoEditando" placeholder="Ej: 2-1" />
+          <button (click)="finalizarPartido(p.idPartido)">Finalizar</button>
+          <button (click)="cancelarFinalizar()">Cancelar</button>
         } @else {
-          {{ p.fechaPartido | date:'dd/MM/yyyy' }}
+          <button (click)="empezarFinalizar(p)">Cargar resultado</button>
         }
-      </td>
-      <td>{{ p.local }}</td>
-      <td>{{ p.visitante }}</td>
-      <td>{{ p.estadoPartido }}</td>
-      <td class="acciones">
-        @if (editandoId !== p.idPartido) {
-          @if (p.estadoPartido === 'Por jugarse') {
-            <button class="btn-edit" (click)="empezarEditar(p)">Editar</button>
-            <button class="btn-delete" (click)="eliminar(p.idPartido)">Eliminar</button>
-          }
-        } @else {
-          <button class="btn-save" (click)="guardarEdicion(p.idPartido)">Guardar</button>
-          <button class="btn-cancel" (click)="cancelarEdicion()">Cancelar</button>
-        }
-      </td>
-    </tr>
-    }
+      } @else {
+        <button class="btn-delete" (click)="eliminar(p.idPartido)">Eliminar</button>
+      }
+    </td>
+  </tr>
+  }
   </tbody>
 </table>
 

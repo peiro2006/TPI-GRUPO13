@@ -1,6 +1,7 @@
 package com.example.TPI.PROG4.services;
 
 import com.example.TPI.PROG4.models.Fecha;
+import com.example.TPI.PROG4.models.Partido;
 import com.example.TPI.PROG4.repositories.FechaRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,29 @@ public class FechaService {
 
     private final FechaRepository fechaRepository;
 
+    public void actualizarEstadoFecha(Fecha fecha) {
+        List<Partido> partidos = fecha.getPartidos();
+
+        if (partidos.isEmpty()) {
+            fecha.setEstadoFecha("Programada");
+            return;
+        }
+
+        boolean todosFinalizados = partidos.stream()
+                .allMatch(p -> "Finalizado".equals(p.getEstadoPartido()));
+        boolean algunoEnJuego = partidos.stream()
+                .anyMatch(p -> "En juego".equals(p.getEstadoPartido()));
+
+        if (todosFinalizados) {
+            fecha.setEstadoFecha("Finalizado");
+        } else if (algunoEnJuego) {
+            fecha.setEstadoFecha("En juego");
+        } else {
+            fecha.setEstadoFecha("Programada");
+        }
+
+        fechaRepository.save(fecha);
+    }
     public Fecha crearFecha(String nombreFecha, LocalDate inicioFecha, LocalDate finFecha) {
         String nombreNormalizado = nombreFecha.trim();
 

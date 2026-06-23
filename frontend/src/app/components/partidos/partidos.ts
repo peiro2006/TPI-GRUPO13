@@ -30,6 +30,8 @@ export class PartidosComponent implements OnInit {
   nuevoVisitante: number | null = null;
 
   editandoId: number | null = null;
+  editandoResultadoId: number | null = null;
+  resultadoEditando = '';
   fechaEditando = '';
 
   ngOnInit() {
@@ -42,10 +44,14 @@ export class PartidosComponent implements OnInit {
       next: data => {
         this.partidos = data;
         this.cdr.detectChanges();
+        this.editandoId = null;
+        this.editandoResultadoId = null;
       },
       error: () => {
         this.error = 'Error al cargar partidos';
         this.cdr.detectChanges();
+        this.editandoId = null;
+        this.editandoResultadoId = null;
       }
     });
   }
@@ -119,6 +125,46 @@ export class PartidosComponent implements OnInit {
     this.editandoId = null;
     this.fechaEditando = '';
     this.error = '';
+  }
+  iniciarPartido(id: number) {
+    this.partidoService.actualizar(id, { estadoPartido: 'En juego' }).subscribe({
+      next: () => this.cargarPartidos(),
+      error: err => {
+        this.error = err.error?.error || 'Error al iniciar partido';
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  empezarFinalizar(p: PartidoResponse) {
+    this.editandoResultadoId = p.idPartido;
+    this.resultadoEditando = '';
+    this.error = '';
+  }
+
+  finalizarPartido(id: number) {
+    if (!this.resultadoEditando.trim()) {
+      this.error = 'Ingresá el resultado';
+      return;
+    }
+    this.partidoService.actualizar(id, {
+      resultadoPartido: this.resultadoEditando.trim()
+    }).subscribe({
+      next: () => {
+        this.editandoResultadoId = null;
+        this.resultadoEditando = '';
+        this.cargarPartidos();
+      },
+      error: err => {
+        this.error = err.error?.error || 'Error al finalizar partido';
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  cancelarFinalizar() {
+    this.editandoResultadoId = null;
+    this.resultadoEditando = '';
   }
 
   eliminar(id: number) {

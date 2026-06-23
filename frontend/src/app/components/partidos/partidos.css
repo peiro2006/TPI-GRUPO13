@@ -92,25 +92,17 @@ button:disabled {
 }
 
 .acciones {
-  white-space: nowrap;
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
 }
 
 .btn-edit {
-  background: linear-gradient(135deg, #1976d2, #1565c0);
-  margin-right: 4px;
+  background: linear-gradient(135deg, #1976d2, #1565c0) !important;
 }
 
 .btn-delete {
-  background: linear-gradient(135deg, #dc3545, #a71d2a);
-}
-
-.btn-save {
-  background: linear-gradient(135deg, #2e7d32, #1b5e20);
-  margin-right: 4px;
-}
-
-.btn-cancel {
-  background: linear-gradient(135deg, #6c757d, #495057);
+  background: linear-gradient(135deg, #dc3545, #a71d2a) !important;
 }
 
 a {

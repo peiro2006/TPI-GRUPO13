@@ -28,14 +28,26 @@ public class PartidoMapper {
                 partido.getFechaPartido(),
                 partido.getVisitante(),
                 partido.getLocal(),
+                partido.getResultadoPartido(),
                 partido.getEstadoPartido()
         );
     }
 
-    public static Partido updateFechaPartido(Partido partido, java.time.LocalDate fechaPartido) {
-        return partido.toBuilder()
-                .fechaPartido(fechaPartido)
-                .build();
+    public static Partido applyUpdate(Partido partido, PartidoUpdateReqDto request) {
+        Partido.PartidoBuilder builder = partido.toBuilder();
+
+        if (request.fechaPartido() != null) {
+            builder.fechaPartido(request.fechaPartido());
+        }
+        if (request.estadoPartido() != null) {
+            builder.estadoPartido(request.estadoPartido());
+        }
+        if (request.resultadoPartido() != null && !request.resultadoPartido().isBlank()) {
+            builder.resultadoPartido(request.resultadoPartido());
+            builder.estadoPartido("Finalizado");
+        }
+
+        return builder.build();
     }
 
     public static List<PartidoCreateResDto> toResponseDtoList (List<Partido> models) {
