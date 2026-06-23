@@ -19,6 +19,12 @@ export class App {
     return parsed.nombre || '';
   });
 
+  protected esAdmin = computed(() => {
+    const usuario = localStorage.getItem('usuario');
+    if (!usuario) return false;
+    try { return JSON.parse(usuario).rol === 'ADMIN'; } catch { return false; }
+  });
+
   logout(): void {
     this.auth.logout();
     window.location.href = '/login';

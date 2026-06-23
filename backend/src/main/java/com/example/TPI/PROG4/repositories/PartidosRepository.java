@@ -9,4 +9,5 @@ import java.util.List;
 
 public interface PartidosRepository extends JpaRepository<Partido, Long>, JpaSpecificationExecutor<Partido> {
     List<Partido> findByFecha_IdFecha(Long idFecha, Sort sort);
+    boolean existsByFecha_IdFechaAndLocalAndVisitante(Long idFecha, String local, String visitante);
 }

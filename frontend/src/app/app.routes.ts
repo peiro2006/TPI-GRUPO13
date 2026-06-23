@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './auth.guard';
+import { adminGuard } from './admin.guard';
 
 export const routes: Routes = [
   {
@@ -27,10 +28,12 @@ export const routes: Routes = [
   },
   {
     path: 'home-admin',
+    canActivate: [adminGuard],
     loadComponent: () => import('./components/home-admin/home-admin').then(c => c.HomeAdmin)
   },
   {
     path: 'admin/fechas/:id/partidos',
+    canActivate: [adminGuard],
     loadComponent: () => import('./components/partidos/partidos').then(c => c.PartidosComponent)
   },
   {

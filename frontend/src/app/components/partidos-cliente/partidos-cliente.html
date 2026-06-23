@@ -19,7 +19,7 @@
     @for (p of partidos; track p.idPartido) {
       <div class="partido-card">
         <div class="card-header">
-          <span class="fecha">{{ p.fechaPartido | date:'dd/MM/yyyy' }}</span>
+          <span class="fecha">{{ p.fechaPartido | date:'dd/MM/yyyy' }}{{ p.horaInicio ? ' ' + p.horaInicio.substring(0,5) : '' }}</span>
           <span class="estado" [class.programado]="p.estadoPartido === 'Por jugarse'"
                               [class.jugado]="p.estadoPartido !== 'Por jugarse'">
             {{ p.estadoPartido }}
@@ -27,7 +27,13 @@
         </div>
         <div class="card-body">
           <div class="equipo local">{{ p.local }}</div>
-          <div class="vs">VS</div>
+          <div class="vs">
+            @if (p.golesLocal !== null && p.golesVisitante !== null) {
+              <span class="resultado">{{ p.golesLocal }} - {{ p.golesVisitante }}</span>
+            } @else {
+              <span>VS</span>
+            }
+          </div>
           <div class="equipo visitante">{{ p.visitante }}</div>
         </div>
       </div>

@@ -26,13 +26,18 @@ export class PartidosComponent implements OnInit {
   error = '';
 
   nuevaFechaPartido = '';
+  nuevaHoraInicio = '';
   nuevoLocal: number | null = null;
   nuevoVisitante: number | null = null;
 
   editandoId: number | null = null;
-  editandoResultadoId: number | null = null;
-  resultadoEditando = '';
   fechaEditando = '';
+  horaEditando = '';
+
+  resultadoId: number | null = null;
+  golesLocal = 0;
+  golesVisitante = 0;
+  guardandoResultado = false;
 
   ngOnInit() {
     this.cargarPartidos();
@@ -44,14 +49,10 @@ export class PartidosComponent implements OnInit {
       next: data => {
         this.partidos = data;
         this.cdr.detectChanges();
-        this.editandoId = null;
-        this.editandoResultadoId = null;
       },
       error: () => {
         this.error = 'Error al cargar partidos';
         this.cdr.detectChanges();
-        this.editandoId = null;
-        this.editandoResultadoId = null;
       }
     });
   }
@@ -82,12 +83,14 @@ export class PartidosComponent implements OnInit {
     this.partidoService.crear({
       idFecha: this.fechaId,
       fechaPartido: this.nuevaFechaPartido,
+      horaInicio: this.nuevaHoraInicio || null,
       local: this.equipos.find(e => e.id_equipo === this.nuevoLocal)!.nombre_equipo,
       visitante: this.equipos.find(e => e.id_equipo === this.nuevoVisitante)!.nombre_equipo
     }).subscribe({
       next: () => {
         this.guardando = false;
         this.nuevaFechaPartido = '';
+        this.nuevaHoraInicio = '';
         this.nuevoLocal = null;
         this.nuevoVisitante = null;
         this.cargarPartidos();
@@ -103,12 +106,16 @@ export class PartidosComponent implements OnInit {
   empezarEditar(p: PartidoResponse) {
     this.editandoId = p.idPartido;
     this.fechaEditando = p.fechaPartido.substring(0, 10);
+    this.horaEditando = p.horaInicio ? p.horaInicio.substring(0, 5) : '';
     this.error = '';
   }
 
   guardarEdicion(id: number) {
     if (!this.fechaEditando) return;
-    this.partidoService.actualizar(id, { fechaPartido: this.fechaEditando }).subscribe({
+    this.partidoService.actualizar(id, {
+      fechaPartido: this.fechaEditando,
+      horaInicio: this.horaEditando || undefined
+    }).subscribe({
       next: () => {
         this.editandoId = null;
         this.fechaEditando = '';
@@ -124,47 +131,8 @@ export class PartidosComponent implements OnInit {
   cancelarEdicion() {
     this.editandoId = null;
     this.fechaEditando = '';
+    this.horaEditando = '';
     this.error = '';
-  }
-  iniciarPartido(id: number) {
-    this.partidoService.actualizar(id, { estadoPartido: 'En juego' }).subscribe({
-      next: () => this.cargarPartidos(),
-      error: err => {
-        this.error = err.error?.error || 'Error al iniciar partido';
-        this.cdr.detectChanges();
-      }
-    });
-  }
-
-  empezarFinalizar(p: PartidoResponse) {
-    this.editandoResultadoId = p.idPartido;
-    this.resultadoEditando = '';
-    this.error = '';
-  }
-
-  finalizarPartido(id: number) {
-    if (!this.resultadoEditando.trim()) {
-      this.error = 'Ingresá el resultado';
-      return;
-    }
-    this.partidoService.actualizar(id, {
-      resultadoPartido: this.resultadoEditando.trim()
-    }).subscribe({
-      next: () => {
-        this.editandoResultadoId = null;
-        this.resultadoEditando = '';
-        this.cargarPartidos();
-      },
-      error: err => {
-        this.error = err.error?.error || 'Error al finalizar partido';
-        this.cdr.detectChanges();
-      }
-    });
-  }
-
-  cancelarFinalizar() {
-    this.editandoResultadoId = null;
-    this.resultadoEditando = '';
   }
 
   eliminar(id: number) {
@@ -176,5 +144,90 @@ export class PartidosComponent implements OnInit {
         this.cdr.detectChanges();
       }
     });
+  }
+
+  get esAdmin(): boolean {
+    const u = localStorage.getItem('usuario');
+    if (!u) return false;
+    try { return JSON.parse(u).rol === 'ADMIN'; } catch { return false; }
+  }
+
+  empezarResultado(p: PartidoResponse) {
+    this.resultadoId = p.idPartido;
+    this.golesLocal = p.golesLocal ?? 0;
+    this.golesVisitante = p.golesVisitante ?? 0;
+    this.error = '';
+  }
+
+  guardarResultado(id: number) {
+    if (this.guardandoResultado) return;
+    this.guardandoResultado = true;
+    this.error = '';
+
+    this.partidoService.cargarResultado(id, {
+      golesLocal: this.golesLocal,
+      golesVisitante: this.golesVisitante
+    }).subscribe({
+      next: () => {
+        this.resultadoId = null;
+        this.guardandoResultado = false;
+        this.golesLocal = 0;
+        this.golesVisitante = 0;
+        this.cargarPartidos();
+      },
+      error: err => {
+        this.guardandoResultado = false;
+        this.error = err.error?.error || 'Error al cargar resultado';
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  cancelarResultado() {
+    this.resultadoId = null;
+    this.golesLocal = 0;
+    this.golesVisitante = 0;
+    this.error = '';
+  }
+
+  finalizarId: number | null = null;
+  finalGolesLocal = 0;
+  finalGolesVisitante = 0;
+  guardandoFinal = false;
+
+  empezarFinalizar(p: PartidoResponse) {
+    this.finalizarId = p.idPartido;
+    this.finalGolesLocal = 0;
+    this.finalGolesVisitante = 0;
+    this.error = '';
+  }
+
+  confirmarFinalizar(id: number) {
+    if (this.guardandoFinal) return;
+    this.guardandoFinal = true;
+    this.error = '';
+
+    this.partidoService.finalizar(id, {
+      golesLocal: this.finalGolesLocal,
+      golesVisitante: this.finalGolesVisitante
+    }).subscribe({
+      next: () => {
+        this.finalizarId = null;
+        this.guardandoFinal = false;
+        this.cargarPartidos();
+      },
+      error: err => {
+        this.guardandoFinal = false;
+        this.error = err.error?.error || 'Error al finalizar partido';
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  cancelarFinalizar() {
+    this.finalizarId = null;
+    this.finalGolesLocal = 0;
+    this.finalGolesVisitante = 0;
+    this.error = '';
   }
 }

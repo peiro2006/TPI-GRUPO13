@@ -7,6 +7,9 @@
     <nav class="nav-links">
       @if (auth.isLoggedIn()) {
         <span class="usuario-greeting">Hola, {{ userName() }}</span>
+        @if (esAdmin()) {
+          <a routerLink="/home-admin" class="nav-link nav-admin">Admin</a>
+        }
         <button class="btn-logout" (click)="logout()">Salir</button>
       } @else {
         <a routerLink="/login" class="nav-link">Iniciar Sesión</a>

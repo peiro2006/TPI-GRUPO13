@@ -116,3 +116,43 @@ a {
 a:hover {
   text-decoration: underline;
 }
+
+.btn-resultado {
+  background: linear-gradient(135deg, #f57c00, #e65100) !important;
+}
+
+.btn-finalizar {
+  background: linear-gradient(135deg, #7b1fa2, #4a148c) !important;
+}
+
+.resultado-form {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.goles-input {
+  width: 50px;
+  text-align: center;
+  padding: 4px 6px;
+  border: 2px solid #2e7d32;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.goles-sep {
+  font-weight: 800;
+  color: #2e7d32;
+  font-size: 16px;
+}
+
+.resultado-cargado {
+  font-weight: 700;
+  color: #1a472a;
+  font-size: 14px;
+}
+
+.sin-resultado {
+  color: #ccc;
+}

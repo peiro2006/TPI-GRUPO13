@@ -4,11 +4,13 @@ import com.example.TPI.PROG4.Interfaces.*;
 import com.example.TPI.PROG4.dtos.request.EquipoCreateReqDto;
 import com.example.TPI.PROG4.dtos.request.PartidoCreateReqDto;
 import com.example.TPI.PROG4.dtos.request.PartidoUpdateReqDto;
+import com.example.TPI.PROG4.dtos.request.ResultadoRequestDto;
 import com.example.TPI.PROG4.dtos.response.EquipoCreateResDto;
 import com.example.TPI.PROG4.dtos.response.PartidoCreateResDto;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,6 +27,8 @@ public class PartidoController {
     private final IPartidoListService partidoList;
     private final IPartidoUpdateService partidoUpdateService;
     private final IPartidoDeleteService partidoDeleteService;
+    private final IPartidoResultadoService partidoResultadoService;
+    private final IPartidoFinalizarService partidoFinalizarService;
 
     @PostMapping
     public ResponseEntity<PartidoCreateResDto> createPartido(
@@ -61,6 +65,22 @@ public class PartidoController {
             @PathVariable Long id,
             @Valid @RequestBody PartidoUpdateReqDto request) {
         return ResponseEntity.ok(partidoUpdateService.execute(id, request));
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/{id}/resultado")
+    public ResponseEntity<PartidoCreateResDto> cargarResultado(
+            @PathVariable Long id,
+            @Valid @RequestBody ResultadoRequestDto request) {
+        return ResponseEntity.ok(partidoResultadoService.execute(id, request));
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/{id}/finalizar")
+    public ResponseEntity<PartidoCreateResDto> finalizarPartido(
+            @PathVariable Long id,
+            @Valid @RequestBody ResultadoRequestDto request) {
+        return ResponseEntity.ok(partidoFinalizarService.execute(id, request));
     }
 
     @DeleteMapping("/{id}")

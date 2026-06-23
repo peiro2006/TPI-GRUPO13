@@ -84,6 +84,15 @@ body {
   background: rgba(255,255,255,0.3) !important;
 }
 
+.nav-admin {
+  background: rgba(255, 193, 7, 0.2);
+  border: 2px solid rgba(255, 193, 7, 0.5);
+}
+
+.nav-admin:hover {
+  background: rgba(255, 193, 7, 0.3) !important;
+}
+
 .btn-logout {
   font-family: 'Inter', sans-serif;
   background: transparent;

@@ -7,6 +7,7 @@
 <div class="form-card">
   <h3>Nuevo Partido</h3>
   <input type="date" [(ngModel)]="nuevaFechaPartido" />
+  <input type="time" [(ngModel)]="nuevaHoraInicio" />
   <select [(ngModel)]="nuevoLocal">
     <option [ngValue]="null">Seleccionar local</option>
     @for (e of equipos; track e.id_equipo) {
@@ -26,6 +27,7 @@
   <thead>
     <tr>
       <th>Fecha</th>
+      <th>Hora</th>
       <th>Local</th>
       <th>Visitante</th>
       <th>Resultado</th>
@@ -34,40 +36,70 @@
     </tr>
   </thead>
   <tbody>
-  @for (p of partidos; track p.idPartido) {
-  <tr>
-    <td>
-      @if (editandoId === p.idPartido) {
-        <input type="date" [(ngModel)]="fechaEditando" />
-        <button (click)="guardarEdicion(p.idPartido)">Guardar</button>
-        <button (click)="cancelarEdicion()">Cancelar</button>
-      } @else {
-        {{ p.fechaPartido }}
-      }
-    </td>
-    <td>{{ p.local }}</td>
-    <td>{{ p.visitante }}</td>
-    <td>{{ p.resultadoPartido || '-' }}</td>
-    <td>{{ p.estadoPartido }}</td>
-    <td class="acciones">
-      @if (p.estadoPartido === 'Programado' || p.estadoPartido === 'Por jugarse') {
-        <button (click)="iniciarPartido(p.idPartido)">Iniciar</button>
-        <button class="btn-edit" (click)="empezarEditar(p)">Editar</button>
-        <button class="btn-delete" (click)="eliminar(p.idPartido)">Eliminar</button>
-      } @else if (p.estadoPartido === 'En juego') {
-        @if (editandoResultadoId === p.idPartido) {
-          <input [(ngModel)]="resultadoEditando" placeholder="Ej: 2-1" />
-          <button (click)="finalizarPartido(p.idPartido)">Finalizar</button>
-          <button (click)="cancelarFinalizar()">Cancelar</button>
+    @for (p of partidos; track p.idPartido) {
+    <tr>
+      <td>
+        @if (editandoId === p.idPartido) {
+          <input type="date" [(ngModel)]="fechaEditando" (keyup.enter)="guardarEdicion(p.idPartido)" />
         } @else {
-          <button (click)="empezarFinalizar(p)">Cargar resultado</button>
+          {{ p.fechaPartido | date:'dd/MM/yyyy' }}
         }
-      } @else {
-        <button class="btn-delete" (click)="eliminar(p.idPartido)">Eliminar</button>
-      }
-    </td>
-  </tr>
-  }
+      </td>
+      <td>
+        @if (editandoId === p.idPartido) {
+          <input type="time" [(ngModel)]="horaEditando" (keyup.enter)="guardarEdicion(p.idPartido)" />
+        } @else {
+          {{ p.horaInicio ? (p.horaInicio.substring(0,5)) : '—' }}
+        }
+      </td>
+      <td>{{ p.local }}</td>
+      <td>{{ p.visitante }}</td>
+      <td>
+        @if (resultadoId === p.idPartido) {
+          <div class="resultado-form">
+            <input type="number" min="0" [(ngModel)]="golesLocal" class="goles-input" />
+            <span class="goles-sep">-</span>
+            <input type="number" min="0" [(ngModel)]="golesVisitante" class="goles-input" />
+          </div>
+        } @else if (p.golesLocal !== null && p.golesVisitante !== null) {
+          <span class="resultado-cargado">{{ p.golesLocal }} - {{ p.golesVisitante }}</span>
+        } @else {
+          <span class="sin-resultado">—</span>
+        }
+      </td>
+      <td>{{ p.estadoPartido }}</td>
+      <td class="acciones">
+        @if (editandoId !== p.idPartido && resultadoId !== p.idPartido && finalizarId !== p.idPartido) {
+          @if (p.estadoPartido === 'Por jugarse') {
+            <button class="btn-edit" (click)="empezarEditar(p)">Editar</button>
+            <button class="btn-delete" (click)="eliminar(p.idPartido)">Eliminar</button>
+          }
+          @if (esAdmin && p.estadoPartido !== 'Finalizado') {
+            @if (p.estadoPartido === 'En juego') {
+              <button class="btn-resultado" (click)="empezarResultado(p)">
+                {{ p.golesLocal !== null ? 'Modificar resultado' : 'Cargar resultado' }}
+              </button>
+            }
+            <button class="btn-finalizar" (click)="empezarFinalizar(p)">Finalizar</button>
+          }
+        } @else if (editandoId === p.idPartido) {
+          <button class="btn-save" (click)="guardarEdicion(p.idPartido)">Guardar</button>
+          <button class="btn-cancel" (click)="cancelarEdicion()">Cancelar</button>
+        } @else if (resultadoId === p.idPartido) {
+          <button class="btn-save" (click)="guardarResultado(p.idPartido)" [disabled]="guardandoResultado">Confirmar</button>
+          <button class="btn-cancel" (click)="cancelarResultado()">Cancelar</button>
+        } @else if (finalizarId === p.idPartido) {
+          <div class="resultado-form">
+            <input type="number" min="0" [(ngModel)]="finalGolesLocal" class="goles-input" />
+            <span class="goles-sep">-</span>
+            <input type="number" min="0" [(ngModel)]="finalGolesVisitante" class="goles-input" />
+          </div>
+          <button class="btn-save" (click)="confirmarFinalizar(p.idPartido)" [disabled]="guardandoFinal">Finalizar</button>
+          <button class="btn-cancel" (click)="cancelarFinalizar()">Cancelar</button>
+        }
+      </td>
+    </tr>
+    }
   </tbody>
 </table>
 

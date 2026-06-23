@@ -10,6 +10,8 @@ import com.example.TPI.PROG4.repositories.PartidosRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+
 @Service
 @AllArgsConstructor
 public class PartidoCreateService implements IPartidoCreateService {
@@ -21,9 +23,21 @@ public class PartidoCreateService implements IPartidoCreateService {
     public PartidoCreateResDto execute(PartidoCreateReqDto request){
         Fecha fecha = fechaRepository.findById(request.idFecha())
                 .orElseThrow(() -> new RuntimeException("Fecha no encontrada"));
+
+        if (request.fechaPartido() != null && fecha.getInicioFecha() != null && fecha.getFinFecha() != null) {
+            LocalDate fechaPartido = request.fechaPartido();
+            if (fechaPartido.isBefore(fecha.getInicioFecha()) || fechaPartido.isAfter(fecha.getFinFecha())) {
+                throw new RuntimeException("La fecha del partido debe estar entre " + fecha.getInicioFecha() + " y " + fecha.getFinFecha());
+            }
+        }
+
+        if (partidos.existsByFecha_IdFechaAndLocalAndVisitante(request.idFecha(), request.local(), request.visitante()) ||
+            partidos.existsByFecha_IdFechaAndLocalAndVisitante(request.idFecha(), request.visitante(), request.local())) {
+            throw new RuntimeException("Estos equipos ya tienen un partido en esta fecha");
+        }
+
         return PartidoMapper.toResponseDto(partidos.save(PartidoMapper.toModel(request, fecha)));
     }
 
-
-
 }
+

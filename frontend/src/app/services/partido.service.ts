@@ -6,21 +6,31 @@ export interface PartidoResponse {
   idPartido: number;
   idFecha: number;
   fechaPartido: string;
+  horaInicio: string | null;
   visitante: string;
   local: string;
   resultadoPartido: string;
   estadoPartido: string;
+  golesLocal: number | null;
+  golesVisitante: number | null;
 }
 export interface PartidoRequest {
   idFecha: number;
   fechaPartido: string;
+  horaInicio: string | null;
   visitante: string;
   local: string;
 }
 export interface PartidoUpdateRequest {
   fechaPartido?: string;
+  horaInicio?: string;
   resultadoPartido?: string;
   estadoPartido?: string;
+}
+
+export interface ResultadoRequest {
+  golesLocal: number;
+  golesVisitante: number;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -46,5 +56,13 @@ export class PartidoService {
 
   eliminar(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+
+  cargarResultado(id: number, datos: ResultadoRequest): Observable<PartidoResponse> {
+    return this.http.put<PartidoResponse>(`${this.apiUrl}/${id}/resultado`, datos);
+  }
+
+  finalizar(id: number, datos: ResultadoRequest): Observable<PartidoResponse> {
+    return this.http.put<PartidoResponse>(`${this.apiUrl}/${id}/finalizar`, datos);
   }
 }

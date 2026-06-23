@@ -32,8 +32,10 @@ public class RankingService {
         }
 
         List<RankingResponse> response = new ArrayList<>();
-        for (int i = 0; i < usuarios.size(); i++) {
-            Usuario u = usuarios.get(i);
+        int posicion = 0;
+        for (Usuario u : usuarios) {
+            if (u.getId() == 8) continue;
+            posicion++;
             response.add(RankingResponse.builder()
                     .id(u.getId())
                     .nombre(u.getNombre())
@@ -42,7 +44,7 @@ public class RankingService {
                     .clan(u.getClan())
                     .puntos(u.getPuntos())
                     .pronosticos(u.getPronosticos())
-                    .posicion(i + 1)
+                    .posicion(posicion)
                     .build());
         }
         return response;

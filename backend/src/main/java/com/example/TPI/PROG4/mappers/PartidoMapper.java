@@ -2,6 +2,7 @@ package com.example.TPI.PROG4.mappers;
 
 import com.example.TPI.PROG4.dtos.request.PartidoCreateReqDto;
 import com.example.TPI.PROG4.dtos.request.PartidoUpdateReqDto;
+import com.example.TPI.PROG4.dtos.request.ResultadoRequestDto;
 import com.example.TPI.PROG4.dtos.response.PartidoCreateResDto;
 import com.example.TPI.PROG4.models.Fecha;
 import com.example.TPI.PROG4.models.Partido;
@@ -14,6 +15,7 @@ public class PartidoMapper {
         return Partido.builder()
                 .fecha(fecha)
                 .fechaPartido(request.fechaPartido())
+                .horaInicio(request.horaInicio())
                 .local(request.local())
                 .visitante(request.visitante())
                 .resultadoPartido("")
@@ -26,11 +28,22 @@ public class PartidoMapper {
                 partido.getIdPartido(),
                 partido.getFecha().getIdFecha(),
                 partido.getFechaPartido(),
+                partido.getHoraInicio(),
                 partido.getVisitante(),
                 partido.getLocal(),
                 partido.getResultadoPartido(),
-                partido.getEstadoPartido()
+                partido.getEstadoPartido(),
+                partido.getGolesLocal(),
+                partido.getGolesVisitante()
         );
+    }
+
+    public static Partido applyResultado(Partido partido, ResultadoRequestDto request) {
+        return partido.toBuilder()
+                .golesLocal(request.golesLocal())
+                .golesVisitante(request.golesVisitante())
+                .resultadoPartido(request.golesLocal() + " - " + request.golesVisitante())
+                .build();
     }
 
     public static Partido applyUpdate(Partido partido, PartidoUpdateReqDto request) {
@@ -38,6 +51,9 @@ public class PartidoMapper {
 
         if (request.fechaPartido() != null) {
             builder.fechaPartido(request.fechaPartido());
+        }
+        if (request.horaInicio() != null) {
+            builder.horaInicio(request.horaInicio());
         }
         if (request.estadoPartido() != null) {
             builder.estadoPartido(request.estadoPartido());
