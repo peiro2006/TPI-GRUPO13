@@ -3,7 +3,7 @@ El repositorio del grupo 13 para el TPI de PROG4.
 
 ## Ejecutar el backend
 
-Las credenciales reales no deben quedar en `application.properties` ni en archivos subidos a Git.
+Las credenciales reales no están en `application.properties` ni en archivos subidos a Git.
 
 1. Entrar a la carpeta del backend:
 
