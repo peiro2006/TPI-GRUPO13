@@ -49,8 +49,8 @@ class EquipoControllerTest {
     @Test
     void listEquipoDevuelveEquiposOrdenadosDesdeGetBase() throws Exception {
         when(equipoList.execute(null, null, null)).thenReturn(List.of(
-                new EquipoCreateResDto((short) 1, "Boca Juniors", "Club argentino", "BOC", true),
-                new EquipoCreateResDto((short) 2, "River Plate", "Club argentino", "RIV", true)
+                new EquipoCreateResDto((short) 1, "Boca Juniors", "Club argentino", "BOC", null, true),
+                new EquipoCreateResDto((short) 2, "River Plate", "Club argentino", "RIV", null, true)
         ));
 
         mockMvc.perform(get("/equipo"))
@@ -63,7 +63,7 @@ class EquipoControllerTest {
     @Test
     void getEquipoDevuelveDetalleDesdeGetConId() throws Exception {
         when(equipoGet.execute((short) 1)).thenReturn(
-                new EquipoCreateResDto((short) 1, "Boca Juniors", "Club argentino", "BOC", true)
+                new EquipoCreateResDto((short) 1, "Boca Juniors", "Club argentino", "BOC", null, true)
         );
 
         mockMvc.perform(get("/equipo/{id}", 1))

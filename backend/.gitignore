@@ -35,3 +35,6 @@ build/
 # Entorno local (contiene credenciales)
 run.ps1
 *.env
+.env
+.env.*
+!.env.example
