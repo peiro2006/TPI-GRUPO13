@@ -25,6 +25,10 @@ public class PartidoDeleteService implements IPartidoDeleteService {
         Partido partido = partidosRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Partido no encontrado"));
 
+        if (!"Por jugarse".equals(partido.getEstadoPartido())) {
+            throw new RuntimeException("Solo se puede eliminar un partido en estado 'Por jugarse'");
+        }
+
         Fecha fecha = partido.getFecha();
         if (pronosticoRepository.existsByPartido_IdPartido(id)) {
             throw new RuntimeException("No se puede eliminar un partido con pronósticos asociados");

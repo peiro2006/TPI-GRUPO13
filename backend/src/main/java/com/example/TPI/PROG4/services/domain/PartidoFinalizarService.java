@@ -1,7 +1,6 @@
 package com.example.TPI.PROG4.services.domain;
 
 import com.example.TPI.PROG4.Interfaces.IPartidoFinalizarService;
-import com.example.TPI.PROG4.dtos.request.ResultadoRequestDto;
 import com.example.TPI.PROG4.dtos.response.PartidoCreateResDto;
 import com.example.TPI.PROG4.mappers.PartidoMapper;
 import com.example.TPI.PROG4.models.Partido;
@@ -24,12 +23,16 @@ public class PartidoFinalizarService implements IPartidoFinalizarService {
 
     @Override
     @Transactional
-    public PartidoCreateResDto execute(Long id, ResultadoRequestDto request) {
+    public PartidoCreateResDto execute(Long id) {
         Partido partido = partidosRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Partido no encontrado"));
 
-        if ("Finalizado".equals(partido.getEstadoPartido())) {
-            throw new RuntimeException("El partido ya está finalizado");
+        if (!"En juego".equals(partido.getEstadoPartido())) {
+            throw new RuntimeException("Solo se puede finalizar un partido en estado 'En juego'");
+        }
+
+        if (partido.getGolesLocal() == null || partido.getGolesVisitante() == null) {
+            throw new RuntimeException("Primero debe cargar el resultado del partido");
         }
 
         if (partido.getHoraInicio() != null && partido.getFechaPartido() != null) {
@@ -39,10 +42,9 @@ public class PartidoFinalizarService implements IPartidoFinalizarService {
             }
         }
 
+        String tendencia = calcularTendencia(partido.getGolesLocal(), partido.getGolesVisitante());
         Partido updated = partido.toBuilder()
-                .golesLocal(request.golesLocal())
-                .golesVisitante(request.golesVisitante())
-                .resultadoPartido(request.golesLocal() + " - " + request.golesVisitante())
+                .resultadoTendencia(tendencia)
                 .estadoPartido("Finalizado")
                 .build();
 
@@ -50,5 +52,11 @@ public class PartidoFinalizarService implements IPartidoFinalizarService {
         pronosticoPuntosService.calcularPuntos(saved);
         fechaService.actualizarEstadoFecha(saved.getFecha());
         return PartidoMapper.toResponseDto(saved);
+    }
+
+    private String calcularTendencia(Integer local, Integer visitante) {
+        if (local > visitante) return "Local";
+        if (local < visitante) return "Visitante";
+        return "Empate";
     }
 }

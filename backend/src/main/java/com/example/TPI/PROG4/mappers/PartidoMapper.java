@@ -34,7 +34,8 @@ public class PartidoMapper {
                 partido.getResultadoPartido(),
                 partido.getEstadoPartido(),
                 partido.getGolesLocal(),
-                partido.getGolesVisitante()
+                partido.getGolesVisitante(),
+                partido.getResultadoTendencia()
         );
     }
 
@@ -43,7 +44,14 @@ public class PartidoMapper {
                 .golesLocal(request.golesLocal())
                 .golesVisitante(request.golesVisitante())
                 .resultadoPartido(request.golesLocal() + " - " + request.golesVisitante())
+                .resultadoTendencia(calcularTendencia(request.golesLocal(), request.golesVisitante()))
                 .build();
+    }
+
+    private static String calcularTendencia(Integer local, Integer visitante) {
+        if (local > visitante) return "Local";
+        if (local < visitante) return "Visitante";
+        return "Empate";
     }
 
     public static Partido applyUpdate(Partido partido, PartidoUpdateReqDto request) {

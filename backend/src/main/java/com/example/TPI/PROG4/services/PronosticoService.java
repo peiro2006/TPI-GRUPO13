@@ -30,8 +30,8 @@ public class PronosticoService {
     private boolean esEditable(Partido partido) {
         try {
             if (!"Por jugarse".equals(partido.getEstadoPartido())) return false;
-            if (partido.getFechaPartido() == null) return true;
-            LocalDateTime matchDateTime = partido.getFechaPartido().atTime(20, 0);
+            if (partido.getFechaPartido() == null || partido.getHoraInicio() == null) return true;
+            LocalDateTime matchDateTime = LocalDateTime.of(partido.getFechaPartido(), partido.getHoraInicio());
             return LocalDateTime.now().isBefore(matchDateTime.minusMinutes(30));
         } catch (Exception e) {
             log.warn("Error al verificar editable para partido {}: {}", partido.getIdPartido(), e.getMessage());
@@ -100,14 +100,18 @@ public class PronosticoService {
                 .orElseGet(() -> new PronosticoResponse(
                         null, partidoId, partido.getLocal(), partido.getVisitante(),
                         partido.getFechaPartido(),
-                        "20:00",
+                        horaPartidoStr(partido),
                         partido.getEstadoPartido(), null, null, esEditable(partido)
                 ));
     }
 
-    public List<PronosticoResponse> listarPorUsuario(Long usuarioId) {
+    public List<PronosticoResponse> listarPorUsuario(Long usuarioId, Usuario solicitante) {
+        boolean esPropio = solicitante.getId().equals(usuarioId);
+        boolean esAdmin = solicitante.getRol().name().equals("ADMIN");
+
         List<Pronostico> pronosticos = pronosticoRepository.findByUsuario_Id(usuarioId);
         return pronosticos.stream()
+                .filter(p -> esPropio || esAdmin || !esEditable(p.getPartido()))
                 .map(p -> toResponse(p, p.getPartido()))
                 .sorted((a, b) -> {
                     int cmp = b.fechaPartido().compareTo(a.fechaPartido());
@@ -141,7 +145,7 @@ public class PronosticoService {
                     result.add(new PronosticoResponse(
                             null, p.getIdPartido(), p.getLocal(), p.getVisitante(),
                             p.getFechaPartido(),
-                            "20:00",
+                            horaPartidoStr(p),
                             p.getEstadoPartido(), null, null, esEditable(p)
                     ));
                 }
@@ -170,11 +174,15 @@ public class PronosticoService {
                 partido.getLocal(),
                 partido.getVisitante(),
                 partido.getFechaPartido(),
-                "20:00",
+                horaPartidoStr(partido),
                 partido.getEstadoPartido(),
                 p.getGolesLocal(),
                 p.getGolesVisitante(),
                 esEditable(partido)
         );
+    }
+
+    private String horaPartidoStr(Partido partido) {
+        return partido.getHoraInicio() != null ? partido.getHoraInicio().toString() : "20:00";
     }
 }

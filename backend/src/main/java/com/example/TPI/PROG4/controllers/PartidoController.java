@@ -29,6 +29,7 @@ public class PartidoController {
     private final IPartidoDeleteService partidoDeleteService;
     private final IPartidoResultadoService partidoResultadoService;
     private final IPartidoFinalizarService partidoFinalizarService;
+    private final com.example.TPI.PROG4.Interfaces.IPartidoIniciarService partidoIniciarService;
 
     @PostMapping
     public ResponseEntity<PartidoCreateResDto> createPartido(
@@ -78,9 +79,15 @@ public class PartidoController {
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}/finalizar")
     public ResponseEntity<PartidoCreateResDto> finalizarPartido(
-            @PathVariable Long id,
-            @Valid @RequestBody ResultadoRequestDto request) {
-        return ResponseEntity.ok(partidoFinalizarService.execute(id, request));
+            @PathVariable Long id) {
+        return ResponseEntity.ok(partidoFinalizarService.execute(id));
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/{id}/iniciar")
+    public ResponseEntity<PartidoCreateResDto> iniciarPartido(
+            @PathVariable Long id) {
+        return ResponseEntity.ok(partidoIniciarService.execute(id));
     }
 
     @DeleteMapping("/{id}")

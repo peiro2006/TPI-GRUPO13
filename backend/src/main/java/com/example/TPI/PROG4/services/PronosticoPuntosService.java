@@ -30,7 +30,6 @@ public class PronosticoPuntosService {
             int puntos = calcularPuntosPronostico(golesLocal, golesVisitante, p.getGolesLocal(), p.getGolesVisitante());
             Usuario usuario = p.getUsuario();
             usuario.setPuntos(usuario.getPuntos() + puntos);
-            usuario.setPronosticos(usuario.getPronosticos() + 1);
             usuarioRepository.save(usuario);
         }
     }

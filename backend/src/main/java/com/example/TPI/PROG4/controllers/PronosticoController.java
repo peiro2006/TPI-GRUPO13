@@ -35,8 +35,10 @@ public class PronosticoController {
     }
 
     @GetMapping("/usuario/{usuarioId}")
-    public ResponseEntity<List<PronosticoResponse>> listarPorUsuario(@PathVariable Long usuarioId) {
-        return ResponseEntity.ok(pronosticoService.listarPorUsuario(usuarioId));
+    public ResponseEntity<List<PronosticoResponse>> listarPorUsuario(
+            @PathVariable Long usuarioId, Authentication auth) {
+        Usuario usuario = getUsuario(auth);
+        return ResponseEntity.ok(pronosticoService.listarPorUsuario(usuarioId, usuario));
     }
 
     @PutMapping("/partido/{partidoId}")

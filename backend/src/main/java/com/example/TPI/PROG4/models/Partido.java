@@ -50,4 +50,7 @@ public class Partido {
 
     @Column(name = "estado_partido")
     private String estadoPartido = "Por jugarse";
+
+    @Column(name = "resultado_tendencia")
+    private String resultadoTendencia;
 }

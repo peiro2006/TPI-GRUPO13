@@ -73,6 +73,10 @@ public class FechaService {
         Fecha fecha = fechaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Fecha no encontrada"));
 
+        if (!"Programada".equals(fecha.getEstadoFecha())) {
+            throw new RuntimeException("Solo se puede modificar una fecha en estado 'Programada'");
+        }
+
         if (!fecha.getPartidos().isEmpty()) {
             throw new RuntimeException("No se puede modificar una fecha con partidos asociados");
         }
@@ -98,19 +102,13 @@ public class FechaService {
         Fecha fecha = fechaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Fecha no encontrada"));
 
-        List<Partido> partidos = fecha.getPartidos();
-        boolean hayNoFinalizados = partidos.stream()
-                .anyMatch(p -> !"Finalizado".equals(p.getEstadoPartido()));
-
-        if (!partidos.isEmpty() && hayNoFinalizados) {
-            throw new RuntimeException("Solo se puede eliminar una fecha si no tiene partidos o todos están finalizados");
+        if (!"Programada".equals(fecha.getEstadoFecha())) {
+            throw new RuntimeException("Solo se puede eliminar una fecha en estado 'Programada'");
         }
 
-        for (Partido p : partidos) {
-            pronosticoRepository.deleteByPartido_IdPartido(p.getIdPartido());
-            partidoRepository.delete(p);
+        if (!fecha.getPartidos().isEmpty()) {
+            throw new RuntimeException("No se puede eliminar una fecha con partidos asociados");
         }
-        partidos.clear();
 
         fechaRepository.delete(fecha);
     }

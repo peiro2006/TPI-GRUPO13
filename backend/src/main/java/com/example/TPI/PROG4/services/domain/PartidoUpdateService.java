@@ -27,6 +27,10 @@ public class PartidoUpdateService implements IPartidoUpdateService {
         Partido partido = partidosRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Partido no encontrado"));
 
+        if (!"Por jugarse".equals(partido.getEstadoPartido())) {
+            throw new RuntimeException("Solo se puede modificar un partido en estado 'Por jugarse'");
+        }
+
         if (request.fechaPartido() != null) {
             Fecha fecha = partido.getFecha();
             LocalDate nuevaFecha = request.fechaPartido();

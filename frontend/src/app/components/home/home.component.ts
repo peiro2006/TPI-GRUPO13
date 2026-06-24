@@ -72,14 +72,14 @@ import { FechaService, FechaResponse } from '../../services/fecha.service';
         <div class="filtros">
           <label>
             Orden:
-            <select [(ngModel)]="orden" (change)="cargarRanking()">
+            <select [(ngModel)]="orden" (ngModelChange)="cambiarOrdenRanking($event)">
               <option value="desc">Mayor puntaje primero</option>
               <option value="asc">Menor puntaje primero</option>
             </select>
           </label>
           <label>
             Clan:
-            <select [(ngModel)]="clanSeleccionado" (change)="cargarRanking()">
+            <select [(ngModel)]="clanSeleccionado" (ngModelChange)="cambiarClanRanking($event)">
               <option value="">Todos los clanes</option>
               @for (c of clanes; track c) {
                 <option [value]="c">{{ c }}</option>
@@ -556,13 +556,29 @@ export class HomeComponent implements OnInit {
   cargarRanking(): void {
     const clan = this.clanSeleccionado || undefined;
     this.auth.getRanking(this.orden, clan).subscribe({
-      next: (r) => this.ranking = r
+      next: (r) => {
+        this.ranking = r;
+        this.cdr.detectChanges();
+      }
     });
+  }
+
+  cambiarOrdenRanking(orden: string): void {
+    this.orden = orden;
+    this.cargarRanking();
+  }
+
+  cambiarClanRanking(clan: string): void {
+    this.clanSeleccionado = clan;
+    this.cargarRanking();
   }
 
   cargarClanes(): void {
     this.auth.getClanes().subscribe({
-      next: (c) => this.clanes = c
+      next: (c) => {
+        this.clanes = c;
+        this.cdr.detectChanges();
+      }
     });
   }
 

@@ -1,4 +1,7 @@
-<h2>Partidos - {{ nombreFecha }}</h2>
+<section class="admin-partidos-page">
+<div class="page-heading">
+  <h2>Partidos - {{ nombreFecha }}</h2>
+</div>
 
 @if (error) {
 <div class="error">{{ error }}</div>
@@ -103,4 +106,5 @@
   </tbody>
 </table>
 
-<a routerLink="/fechas">Volver a fechas</a>
+<a routerLink="/fechas" class="back-link">Volver a fechas</a>
+</section>

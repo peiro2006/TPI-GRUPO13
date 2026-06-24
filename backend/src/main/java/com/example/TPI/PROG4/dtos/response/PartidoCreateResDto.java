@@ -13,5 +13,6 @@ public record PartidoCreateResDto (
         String resultadoPartido,
         String estadoPartido,
         Integer golesLocal,
-        Integer golesVisitante
+        Integer golesVisitante,
+        String resultadoTendencia
 ) {}

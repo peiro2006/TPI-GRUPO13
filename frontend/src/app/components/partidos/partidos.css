@@ -1,9 +1,26 @@
-h2 {
-  color: #1a3c34;
-  font-weight: 700;
-  margin-bottom: 20px;
+:host {
+  display: block;
+}
+
+.admin-partidos-page {
+  width: min(100% - 40px, 1480px);
+  margin: 0 auto;
+  padding: 40px 0 56px;
+}
+
+.page-heading {
+  margin-bottom: 24px;
+  padding-bottom: 14px;
   border-bottom: 3px solid #2e7d32;
-  padding-bottom: 8px;
+}
+
+h2 {
+  color: #143b2a;
+  font-size: 28px;
+  line-height: 1.2;
+  font-weight: 800;
+  margin: 0;
+  letter-spacing: 0;
 }
 
 .error {
@@ -13,87 +30,120 @@ h2 {
   border-radius: 8px;
   margin-bottom: 16px;
   font-size: 14px;
+  font-weight: 600;
+}
+
+.form-card {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 12px;
+  margin-bottom: 22px;
+  padding: 20px;
+  background: #fff;
+  border: 1px solid #e5ebe7;
+  border-radius: 8px;
+  box-shadow: 0 10px 24px rgba(19, 46, 30, 0.08);
+}
+
+.form-card h3 {
+  flex: 1 0 100%;
+  margin: 0;
+  color: #143b2a;
+  font-size: 18px;
+  line-height: 1.2;
+  font-weight: 800;
+  letter-spacing: 0;
+}
+
+input,
+select {
+  min-height: 42px;
+  padding: 9px 12px;
+  border: 1px solid #cfd8d2;
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: inherit;
+  background: #fff;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input:focus,
+select:focus {
+  border-color: #2e7d32;
+  box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.12);
+}
+
+button {
+  min-height: 42px;
+  background: linear-gradient(135deg, #2e7d32, #1b5e20);
+  color: #fff;
+  border: none;
+  padding: 9px 18px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 700;
+  font-family: inherit;
+  transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
+}
+
+button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(46, 125, 50, 0.22);
+}
+
+button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
 table {
   width: 100%;
   border-collapse: collapse;
   background: #fff;
+  border: 1px solid #e5ebe7;
   border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 24px rgba(19, 46, 30, 0.08);
 }
 
 th {
-  background-color: #2e7d32;
+  background: linear-gradient(135deg, #1a472a, #2d7a3a);
   color: #fff;
-  font-weight: 600;
-  padding: 12px 10px;
+  font-weight: 700;
+  padding: 16px 12px;
   text-align: left;
-  font-size: 14px;
+  font-size: 13px;
+  letter-spacing: 0;
 }
 
 td {
-  padding: 10px;
-  border-bottom: 1px solid #dee2e6;
+  padding: 14px 12px;
+  border-bottom: 1px solid #edf1ee;
   font-size: 14px;
-  color: #212529;
+  color: #243228;
+  vertical-align: middle;
 }
 
-tr:nth-child(even) {
-  background-color: #f8f9fa;
+tr:last-child td {
+  border-bottom: none;
 }
 
-tr:hover {
-  background-color: #e8f5e9;
+tbody tr:nth-child(even) {
+  background-color: #fbfcfb;
 }
 
-.form-card {
-  margin-bottom: 16px;
-  padding: 16px;
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.form-card h3 {
-  margin: 0 0 12px 0;
-  color: #1a3c34;
-  font-size: 16px;
-}
-
-input, select {
-  padding: 8px 10px;
-  border: 1px solid #ced4da;
-  border-radius: 4px;
-  font-size: 14px;
-  margin-right: 8px;
-  margin-bottom: 8px;
-}
-
-button {
-  background: linear-gradient(135deg, #2e7d32, #1b5e20);
-  color: #fff;
-  border: none;
-  padding: 8px 18px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-  transition: opacity 0.2s;
-}
-
-button:hover {
-  opacity: 0.9;
-}
-
-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+tbody tr:hover {
+  background-color: #f0faf0;
 }
 
 .acciones {
   display: flex;
-  gap: 6px;
+  gap: 8px;
   flex-wrap: wrap;
 }
 
@@ -105,18 +155,6 @@ button:disabled {
   background: linear-gradient(135deg, #dc3545, #a71d2a) !important;
 }
 
-a {
-  display: inline-block;
-  margin-top: 16px;
-  color: #2e7d32;
-  text-decoration: none;
-  font-size: 14px;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-
 .btn-resultado {
   background: linear-gradient(135deg, #f57c00, #e65100) !important;
 }
@@ -125,18 +163,24 @@ a:hover {
   background: linear-gradient(135deg, #7b1fa2, #4a148c) !important;
 }
 
+.btn-cancel {
+  background: #eef1ef !important;
+  color: #415047;
+}
+
 .resultado-form {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
 }
 
 .goles-input {
-  width: 50px;
+  width: 54px;
+  min-height: 36px;
   text-align: center;
-  padding: 4px 6px;
-  border: 2px solid #2e7d32;
-  border-radius: 4px;
+  padding: 5px 6px;
+  border: 1px solid #2e7d32;
+  border-radius: 6px;
   font-size: 14px;
   font-weight: 700;
 }
@@ -154,23 +198,102 @@ a:hover {
 }
 
 .sin-resultado {
-  color: #ccc;
+  color: #aab3ad;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  margin-top: 18px;
+  color: #1f6f30;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.back-link:hover {
+  text-decoration: underline;
 }
 
 @media (max-width: 768px) {
-  h2 { font-size: 18px; }
-  table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
-  th, td { white-space: nowrap; padding: 8px 6px; font-size: 12px; }
-  .form-card { padding: 12px; }
-  .form-card input, .form-card select { width: 100%; margin: 4px 0; box-sizing: border-box; }
-  .goles-input { width: 40px; font-size: 13px; }
-  .acciones { gap: 4px; }
-  button { padding: 6px 12px; font-size: 12px; }
+  .admin-partidos-page {
+    width: calc(100% - 24px);
+    padding: 28px 0 36px;
+  }
+
+  .page-heading {
+    margin-bottom: 18px;
+  }
+
+  h2 {
+    font-size: 22px;
+  }
+
+  table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  th,
+  td {
+    white-space: nowrap;
+    padding: 10px 8px;
+    font-size: 12px;
+  }
+
+  .form-card {
+    padding: 16px;
+    align-items: stretch;
+  }
+
+  .form-card input,
+  .form-card select,
+  .form-card button {
+    width: 100%;
+  }
+
+  .goles-input {
+    width: 42px;
+    font-size: 13px;
+  }
+
+  .acciones {
+    gap: 6px;
+  }
+
+  button {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
 }
 
 @media (max-width: 480px) {
-  .form-card input, .form-card select { font-size: 13px; padding: 6px 8px; }
-  .resultado-form { flex-wrap: wrap; }
-  .goles-input { width: 36px; }
-  th:nth-child(2), td:nth-child(2) { display: none; }
+  .admin-partidos-page {
+    width: calc(100% - 20px);
+    padding-top: 24px;
+  }
+
+  .form-card h3 {
+    font-size: 16px;
+  }
+
+  .form-card input,
+  .form-card select {
+    font-size: 13px;
+  }
+
+  .resultado-form {
+    flex-wrap: wrap;
+  }
+
+  .goles-input {
+    width: 38px;
+  }
+
+  th:nth-child(2),
+  td:nth-child(2) {
+    display: none;
+  }
 }

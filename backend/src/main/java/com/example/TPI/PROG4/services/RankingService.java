@@ -23,12 +23,12 @@ public class RankingService {
 
         if (tieneClan) {
             usuarios = ascendente
-                ? usuarioRepository.findByClanOrderByPuntosAscPronosticosDesc(clan)
-                : usuarioRepository.findByClanOrderByPuntosDescPronosticosAsc(clan);
+                ? usuarioRepository.findRankingByClanAsc(clan)
+                : usuarioRepository.findRankingByClan(clan);
         } else {
             usuarios = ascendente
-                ? usuarioRepository.findAllByOrderByPuntosAscPronosticosDesc()
-                : usuarioRepository.findAllByOrderByPuntosDescPronosticosAsc();
+                ? usuarioRepository.findRankingGlobalAsc()
+                : usuarioRepository.findRankingGlobal();
         }
 
         List<RankingResponse> response = new ArrayList<>();
@@ -58,7 +58,9 @@ public class RankingService {
         Usuario u = usuarioRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        List<Usuario> ranking = usuarioRepository.findAllByOrderByPuntosDescPronosticosAsc();
+        List<Usuario> ranking = usuarioRepository.findRankingGlobal().stream()
+                .filter(x -> x.getId() != 8)
+                .toList();
         int posicion = 0;
         for (int i = 0; i < ranking.size(); i++) {
             if (ranking.get(i).getId().equals(id)) {
