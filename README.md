@@ -2,6 +2,8 @@
 
 Sistema web de pronósticos deportivos para el Torneo de Programación 4 (PROG4). Permite registrar usuarios, crear equipos y fechas, cargar partidos, registrar pronósticos y calcular puntajes automáticamente.
 
+Las credenciales reales no están en `application.properties` ni en archivos subidos a Git.
+
 ---
 
 ## Tecnologías
