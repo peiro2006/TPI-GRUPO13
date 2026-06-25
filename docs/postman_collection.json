@@ -1,0 +1,495 @@
+{
+  "info": {
+    "name": "ProdeGol API",
+    "description": "Colección de endpoints para el sistema de pronósticos deportivos ProdeGol.\n\n## Configuración inicial\n\n1. Importar esta colección en Postman\n2. Crear un environment con:\n   - `base_url`: `http://localhost:8080`\n   - `token`: (se autocompleta al hacer login)\n\n## Autenticación\n\nLa colección incluye un script de tests en el endpoint de Login que guarda automáticamente el token JWT en la variable `token`. Una vez logueado, todos los endpoints autenticados usan `{{token}}` en el header Authorization.\n\nImportante: primero ejecutar `POST Register` o `POST Login` para obtener el token.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "prodegol-grupo13"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "key": "partido_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "fecha_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "usuario_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "equipo_id",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "description": "Registro e inicio de sesión. El endpoint Login configura automáticamente el token para el resto de la colección.",
+      "item": [
+        {
+          "name": "Register",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    pm.environment.set('token', pm.response.json().token);",
+                  "    pm.environment.set('usuario_id', pm.response.json().id.toString());",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Juan\",\n  \"apellido\": \"Pérez\",\n  \"email\": \"juan@example.com\",\n  \"password\": \"Password1\",\n  \"clan\": \"LosPibes\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    pm.environment.set('token', pm.response.json().token);",
+                  "    pm.environment.set('usuario_id', pm.response.json().id.toString());",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"juan@example.com\",\n  \"password\": \"Password1\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "login"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Equipos",
+      "description": "CRUD de equipos. Máximo 32 equipos activos.",
+      "item": [
+        {
+          "name": "Crear equipo",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre_equipo\": \"Boca Juniors\",\n  \"nombre_corto\": \"BOC\",\n  \"descripcion\": \"Club fundado en 1905\",\n  \"bandera_codigo\": \"ar\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/equipo",
+              "host": ["{{base_url}}"],
+              "path": ["equipo"]
+            }
+          }
+        },
+        {
+          "name": "Listar equipos",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/equipo",
+              "host": ["{{base_url}}"],
+              "path": ["equipo"],
+              "query": [
+                { "key": "nombre_equipo", "value": "Boca", "disabled": true },
+                { "key": "nombre_corto", "value": "BOC", "disabled": true }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Obtener equipo",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/equipo/{{equipo_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["equipo", "{{equipo_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Eliminar equipo (soft-delete)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/equipo/{{equipo_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["equipo", "{{equipo_id}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Fechas",
+      "description": "Gestión de fechas (jornadas/rounds).",
+      "item": [
+        {
+          "name": "Crear fecha",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombreFecha\": \"Fecha 1\",\n  \"inicioFecha\": \"2026-06-01\",\n  \"finFecha\": \"2026-06-15\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/fechas",
+              "host": ["{{base_url}}"],
+              "path": ["api", "fechas"]
+            }
+          }
+        },
+        {
+          "name": "Listar fechas",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/fechas?orden=asc",
+              "host": ["{{base_url}}"],
+              "path": ["api", "fechas"],
+              "query": [
+                { "key": "orden", "value": "asc" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Actualizar fecha",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombreFecha\": \"Fecha 1 - Actualizada\",\n  \"inicioFecha\": \"2026-06-01\",\n  \"finFecha\": \"2026-06-20\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/fechas/{{fecha_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "fechas", "{{fecha_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Eliminar fecha",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/fechas/{{fecha_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "fechas", "{{fecha_id}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Partidos",
+      "description": "CRUD de partidos dentro de una fecha. Los endpoints de resultado y finalizar requieren rol ADMIN.",
+      "item": [
+        {
+          "name": "Crear partido",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idFecha\": {{fecha_id}},\n  \"fechaPartido\": \"2026-06-10\",\n  \"horaInicio\": \"21:00\",\n  \"local\": \"Boca Juniors\",\n  \"visitante\": \"River Plate\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/partidos",
+              "host": ["{{base_url}}"],
+              "path": ["partidos"]
+            }
+          }
+        },
+        {
+          "name": "Listar partidos",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/partidos",
+              "host": ["{{base_url}}"],
+              "path": ["partidos"],
+              "query": [
+                { "key": "local", "value": "Boca", "disabled": true },
+                { "key": "visitante", "value": "River", "disabled": true }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Listar partidos por fecha",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/partidos/fecha/{{fecha_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["partidos", "fecha", "{{fecha_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Actualizar partido",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fechaPartido\": \"2026-06-11\",\n  \"horaInicio\": \"19:00\",\n  \"estadoPartido\": \"En juego\",\n  \"resultadoPartido\": null\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/partidos/{{partido_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["partidos", "{{partido_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Cargar resultado (ADMIN)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"golesLocal\": 2,\n  \"golesVisitante\": 1\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/partidos/{{partido_id}}/resultado",
+              "host": ["{{base_url}}"],
+              "path": ["partidos", "{{partido_id}}", "resultado"]
+            }
+          }
+        },
+        {
+          "name": "Finalizar partido (ADMIN)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/partidos/{{partido_id}}/finalizar",
+              "host": ["{{base_url}}"],
+              "path": ["partidos", "{{partido_id}}", "finalizar"]
+            }
+          }
+        },
+        {
+          "name": "Eliminar partido",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/partidos/{{partido_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["partidos", "{{partido_id}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Pronósticos",
+      "description": "Registro y consulta de pronósticos. Los pronósticos solo se pueden crear/modificar hasta 30 minutos antes del partido.",
+      "item": [
+        {
+          "name": "Obtener próximos pronósticos",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/pronosticos/proximos",
+              "host": ["{{base_url}}"],
+              "path": ["api", "pronosticos", "proximos"]
+            }
+          }
+        },
+        {
+          "name": "Obtener pronóstico de un partido",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/pronosticos/partido/{{partido_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "pronosticos", "partido", "{{partido_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Crear o actualizar pronóstico",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"golesLocal\": 2,\n  \"golesVisitante\": 1\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/pronosticos/partido/{{partido_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "pronosticos", "partido", "{{partido_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Pronósticos de un usuario",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/pronosticos/usuario/{{usuario_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "pronosticos", "usuario", "{{usuario_id}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Ranking",
+      "description": "Ranking de usuarios, listado de clanes y perfil público.",
+      "item": [
+        {
+          "name": "Ranking general",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/ranking?orden=desc",
+              "host": ["{{base_url}}"],
+              "path": ["api", "ranking"],
+              "query": [
+                { "key": "orden", "value": "desc" },
+                { "key": "clan", "value": "LosPibes", "disabled": true }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Listar clanes",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/ranking/clanes",
+              "host": ["{{base_url}}"],
+              "path": ["api", "ranking", "clanes"]
+            }
+          }
+        },
+        {
+          "name": "Perfil de usuario",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/ranking/usuario/{{usuario_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "ranking", "usuario", "{{usuario_id}}"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
