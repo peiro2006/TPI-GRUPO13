@@ -190,15 +190,29 @@ export class PartidosComponent implements OnInit {
     this.error = '';
   }
 
+  iniciandoId: number | null = null;
+
+  iniciarPartido(id: number) {
+    this.iniciandoId = id;
+    this.error = '';
+    this.partidoService.iniciar(id).subscribe({
+      next: () => {
+        this.iniciandoId = null;
+        this.cargarPartidos();
+      },
+      error: err => {
+        this.iniciandoId = null;
+        this.error = err.error?.error || 'Error al iniciar partido';
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
   finalizarId: number | null = null;
-  finalGolesLocal = 0;
-  finalGolesVisitante = 0;
   guardandoFinal = false;
 
   empezarFinalizar(p: PartidoResponse) {
     this.finalizarId = p.idPartido;
-    this.finalGolesLocal = 0;
-    this.finalGolesVisitante = 0;
     this.error = '';
   }
 
@@ -207,10 +221,7 @@ export class PartidosComponent implements OnInit {
     this.guardandoFinal = true;
     this.error = '';
 
-    this.partidoService.finalizar(id, {
-      golesLocal: this.finalGolesLocal,
-      golesVisitante: this.finalGolesVisitante
-    }).subscribe({
+    this.partidoService.finalizar(id).subscribe({
       next: () => {
         this.finalizarId = null;
         this.guardandoFinal = false;
@@ -226,8 +237,6 @@ export class PartidosComponent implements OnInit {
 
   cancelarFinalizar() {
     this.finalizarId = null;
-    this.finalGolesLocal = 0;
-    this.finalGolesVisitante = 0;
     this.error = '';
   }
 }

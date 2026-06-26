@@ -76,6 +76,7 @@
           @if (p.estadoPartido === 'Por jugarse') {
             <button class="btn-edit" (click)="empezarEditar(p)">Editar</button>
             <button class="btn-delete" (click)="eliminar(p.idPartido)">Eliminar</button>
+            <button class="btn-iniciar" (click)="iniciarPartido(p.idPartido)" [disabled]="iniciandoId === p.idPartido">Iniciar partido</button>
           }
           @if (esAdmin && p.estadoPartido !== 'Finalizado') {
             @if (p.estadoPartido === 'En juego') {
@@ -92,12 +93,8 @@
           <button class="btn-save" (click)="guardarResultado(p.idPartido)" [disabled]="guardandoResultado">Confirmar</button>
           <button class="btn-cancel" (click)="cancelarResultado()">Cancelar</button>
         } @else if (finalizarId === p.idPartido) {
-          <div class="resultado-form">
-            <input type="number" min="0" [(ngModel)]="finalGolesLocal" class="goles-input" />
-            <span class="goles-sep">-</span>
-            <input type="number" min="0" [(ngModel)]="finalGolesVisitante" class="goles-input" />
-          </div>
-          <button class="btn-save" (click)="confirmarFinalizar(p.idPartido)" [disabled]="guardandoFinal">Finalizar</button>
+          <span class="confirm-msg">¿Finalizar partido?</span>
+          <button class="btn-save" (click)="confirmarFinalizar(p.idPartido)" [disabled]="guardandoFinal">Confirmar</button>
           <button class="btn-cancel" (click)="cancelarFinalizar()">Cancelar</button>
         }
       </td>

@@ -204,7 +204,7 @@ erDiagram
 | POST | `/api/fechas` | ✓ | Crear fecha |
 | GET | `/api/fechas` | ✓ | Listar fechas (`?orden=asc\|desc`) |
 | PUT | `/api/fechas/{id}` | ✓ | Actualizar fecha |
-| DELETE | `/api/fechas/{id}` | ✓ | Eliminar fecha (solo sin partidos activos) |
+| DELETE | `/api/fechas/{id}` | ✓ | Eliminar fecha (borra en cascada partidos y pronósticos) |
 
 ### Partidos (`/partidos`)
 
@@ -214,8 +214,9 @@ erDiagram
 | GET | `/partidos` | ✓ | Listar partidos (filtros query opcionales) |
 | GET | `/partidos/fecha/{fechaId}` | ✓ | Listar por fecha |
 | PATCH | `/partidos/{id}` | ✓ | Actualizar parcialmente |
+| PUT | `/partidos/{id}/iniciar` | ADMIN | Iniciar partido manualmente |
 | PUT | `/partidos/{id}/resultado` | ADMIN | Cargar resultado |
-| PUT | `/partidos/{id}/finalizar` | ADMIN | Finalizar y calcular puntos |
+| PUT | `/partidos/{id}/finalizar` | ADMIN | Finalizar (no modifica resultado) |
 | DELETE | `/partidos/{id}` | ✓ | Eliminar (solo sin pronósticos) |
 
 ### Pronósticos (`/api/pronosticos`)
@@ -285,7 +286,7 @@ El cálculo se activa automáticamente al finalizar un partido.
 ### Fechas
 
 - `finFecha` debe ser mayor o igual a `inicioFecha`.
-- Una fecha solo se puede eliminar si no tiene partidos o todos están finalizados.
+- Una fecha solo se puede eliminar si está en estado "Programada" (se eliminan en cascada sus partidos y pronósticos).
 - El estado de la fecha se actualiza automáticamente según los partidos que contiene.
 
 ### Partidos
@@ -293,9 +294,11 @@ El cálculo se activa automáticamente al finalizar un partido.
 - Al crear un partido se valida que la fecha del partido esté dentro del rango de la fecha (jornada).
 - `fechaPartido` debe ser posterior a la fecha actual al momento de creación.
 - No se puede crear un partido duplicado (mismos equipos en la misma fecha, independientemente del orden local/visitante).
+- Un equipo no puede jugar más de un partido en la misma fecha.
+- Los partidos no se inician automáticamente al llegar la hora — el admin debe iniciarlos manualmente con el botón "Iniciar partido".
 - Solo se puede eliminar un partido si no tiene pronósticos asociados.
 - El resultado solo se puede cargar si el partido está en estado "En juego".
-- Al finalizar se calculan puntos y se actualiza el estado de la fecha.
+- Al finalizar (sin modificar el resultado ya cargado) se calculan puntos y se actualiza el estado de la fecha.
 
 ### Seguridad
 

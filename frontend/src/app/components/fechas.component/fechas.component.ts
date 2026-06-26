@@ -70,7 +70,7 @@ export class FechasComponent implements OnInit {
         this.cargarFechas();
       },
       error: err => {
-        this.mensajeError = typeof err.error === 'string' ? err.error : 'Error al crear fecha';
+        this.mensajeError = err.error?.message || err.error?.error || 'Error al crear fecha';
         this.cdr.detectChanges();
       }
     });
@@ -120,7 +120,7 @@ export class FechasComponent implements OnInit {
       },
       error: err => {
         this.guardando = false;
-        this.mensajeError = typeof err.error === 'string' ? err.error : 'Error al actualizar';
+        this.mensajeError = err.error?.message || err.error?.error || 'Error al actualizar';
         this.cdr.detectChanges();
       }
     });
@@ -139,7 +139,7 @@ export class FechasComponent implements OnInit {
     this.fechaService.eliminar(id).subscribe({
       next: () => this.cargarFechas(),
       error: err => {
-        this.mensajeError = typeof err.error === 'string' ? err.error : 'Error al eliminar';
+        this.mensajeError = err.error?.message || err.error?.error || 'Error al eliminar';
         this.cdr.detectChanges();
       }
     });

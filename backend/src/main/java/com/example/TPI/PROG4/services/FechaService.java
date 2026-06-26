@@ -106,8 +106,9 @@ public class FechaService {
             throw new RuntimeException("Solo se puede eliminar una fecha en estado 'Programada'");
         }
 
-        if (!fecha.getPartidos().isEmpty()) {
-            throw new RuntimeException("No se puede eliminar una fecha con partidos asociados");
+        for (Partido partido : fecha.getPartidos()) {
+            pronosticoRepository.deleteByPartido_IdPartido(partido.getIdPartido());
+            partidoRepository.delete(partido);
         }
 
         fechaRepository.delete(fecha);

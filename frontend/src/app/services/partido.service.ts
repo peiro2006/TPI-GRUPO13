@@ -63,7 +63,11 @@ export class PartidoService {
     return this.http.put<PartidoResponse>(`${this.apiUrl}/${id}/resultado`, datos);
   }
 
-  finalizar(id: number, datos: ResultadoRequest): Observable<PartidoResponse> {
-    return this.http.put<PartidoResponse>(`${this.apiUrl}/${id}/finalizar`, datos);
+  finalizar(id: number): Observable<PartidoResponse> {
+    return this.http.put<PartidoResponse>(`${this.apiUrl}/${id}/finalizar`, {});
+  }
+
+  iniciar(id: number): Observable<PartidoResponse> {
+    return this.http.put<PartidoResponse>(`${this.apiUrl}/${id}/iniciar`, {});
   }
 }

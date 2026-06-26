@@ -36,6 +36,11 @@ public class PartidoCreateService implements IPartidoCreateService {
             throw new RuntimeException("Estos equipos ya tienen un partido en esta fecha");
         }
 
+        if (partidos.existsEquipoEnFecha(request.idFecha(), request.local()) ||
+            partidos.existsEquipoEnFecha(request.idFecha(), request.visitante())) {
+            throw new RuntimeException("Un equipo no puede jugar más de un partido en la misma fecha");
+        }
+
         return PartidoMapper.toResponseDto(partidos.save(PartidoMapper.toModel(request, fecha)));
     }
 
